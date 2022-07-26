@@ -68,12 +68,11 @@ public class insertEncryptedDocument {
         String connectionString = "<Your MongoDB URI>";
 
         // start-kmsproviders
-        String kmsProvider = "azure";
+        String kmsProvider = "gcp";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("tenantId", "<Azure account organization>");
-        providerDetails.put("clientId", "<Azure client ID>");
-        providerDetails.put("clientSecret", "<Azure client secret>");
+        providerDetails.put("email", "<Your GCP Email Address>");
+        providerDetails.put("privateKey", "<Your GCP Private Key>");
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
@@ -151,7 +150,7 @@ public class insertEncryptedDocument {
         Document docRegular = regularClient.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("firstName", "Jon")).first();
         System.out.println(docRegular.toJson());
         System.out.println("Finding a document with encrypted client, searching on an encrypted field");
-        Document docSecure = mongoClientSecure.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("firstName", "Jon")).first();
+        Document docSecure = mongoClientSecure.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("patientRecord.ssn", "987-65-4320")).first();
         System.out.println(docSecure.toJson());
         // end-find 
 

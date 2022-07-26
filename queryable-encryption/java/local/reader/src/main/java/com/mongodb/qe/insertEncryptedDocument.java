@@ -40,6 +40,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import org.bson.Document;
 
+import java.io.FileInputStream;
 
 
 /*
@@ -68,12 +69,20 @@ public class insertEncryptedDocument {
         String connectionString = "<Your MongoDB URI>";
 
         // start-kmsproviders
-        String kmsProvider = "gcp";
+        String kmsProvider = "local";
+        String path = "master-key.txt";
+
+        byte[] localMasterKeyRead = new byte[96];
+
+        try (FileInputStream fis = new FileInputStream(path)) {
+            if (fis.read(localMasterKeyRead) < 96)
+                throw new Exception("Expected to read 96 bytes from file");
+        }
+        Map<String, Object> keyMap = new HashMap<String, Object>();
+        keyMap.put("key", localMasterKeyRead);
+
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
-        Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("email", "<Your GCP Email Address>");
-        providerDetails.put("privateKey", "<Your GCP Private Key>");
-        kmsProviders.put(kmsProvider, providerDetails);
+        kmsProviders.put(kmsProvider, keyMap);
         // end-kmsproviders
 
         // start-schema
@@ -150,7 +159,7 @@ public class insertEncryptedDocument {
         Document docRegular = regularClient.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("firstName", "Jon")).first();
         System.out.println(docRegular.toJson());
         System.out.println("Finding a document with encrypted client, searching on an encrypted field");
-        Document docSecure = mongoClientSecure.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("firstName", "Jon")).first();
+        Document docSecure = mongoClientSecure.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("patientRecord.ssn", "987-65-4320")).first();
         System.out.println(docSecure.toJson());
         // end-find 
 

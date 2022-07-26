@@ -150,7 +150,7 @@ public class insertEncryptedDocument {
         Document docRegular = regularClient.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("firstName", "Jon")).first();
         System.out.println(docRegular.toJson());
         System.out.println("Finding a document with encrypted client, searching on an encrypted field");
-        Document docSecure = mongoClientSecure.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("firstName", "Jon")).first();
+        Document docSecure = mongoClientSecure.getDatabase(encryptedDbName).getCollection(encryptedCollName).find(eq("patientRecord.ssn", "987-65-4320")).first();
         System.out.println(docSecure.toJson());
         // end-find 
 
