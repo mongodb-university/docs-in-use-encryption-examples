@@ -12,33 +12,26 @@ namespace QueryableEncryption
     {
         public static void MakeKey()
         {
+            using (var randomNumberGenerator = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                var bytes = new byte[96];
+                randomNumberGenerator.GetBytes(bytes);
+                var localMasterKeyBase64Write = Convert.ToBase64String(bytes);
+                File.WriteAllText("master-key.txt", localMasterKeyBase64Write);
+            }
 
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
-            const string provider = "azure";
-            var azureKmsOptions = new Dictionary<string, object>
+            const string provider = "local";
+            var localMasterKeyBase64Read = File.ReadAllText("master-key.txt");
+            var localMasterKeyBytes = Convert.FromBase64String(localMasterKeyBase64Read);
+            var localOptions = new Dictionary<string, object>
             {
-               { "tenantId", "<Your Azure Tenant ID>" },
-               { "clientId", "<Your Azure Client ID>" },
-               { "clientSecret", "<Your Azure Client Secret>" },
+                {"key", localMasterKeyBytes}
             };
-            kmsProviders.Add(provider, azureKmsOptions);
+            kmsProviders.Add(provider, localOptions);
             // end-kmsproviders
 
-            // start-datakeyopts
-            DataKeyOptions GetDataKeyOptions(List<string> altNames)
-            {
-                kmsProviders.Add(provider, azureKmsOptions);
-                var dataKeyOptions = new DataKeyOptions(
-                   alternateKeyNames: altNames,
-                   masterKey: new BsonDocument
-                   {
-                       { "keyName", "<Your Azure Key Name>" },
-                       { "keyVaultEndpoint", "<Your Azure Key Vault Endpoint>" },
-                   });
-                return dataKeyOptions;
-            }
-            // end-datakeyopts
 
             // start-create-index
             var connectionString = "<Your MongoDB URI>";
@@ -67,10 +60,8 @@ namespace QueryableEncryption
                 keyVaultNamespace,
                 kmsProviders);
             var clientEncryption = new ClientEncryption(clientEncryptionOptions);
-            var dataKeyOptions1 = GetDataKeyOptions(new List<string> { "dataKey1" });
-            var dataKeyOptions2 = GetDataKeyOptions(new List<string> { "dataKey2" });
-            var dataKeyOptions3 = GetDataKeyOptions(new List<string> { "dataKey3" });
-            var dataKeyOptions4 = GetDataKeyOptions(new List<string> { "dataKey4" });
+            var dataKeyOptions1 = new DataKeyOptions(alternateKeyNames: new List<string> { "dataKey1" });
+            var dataKeyOptions2 = new DataKeyOptions(alternateKeyNames: new List<string> { "dataKey2" });
 
 
             BsonBinaryData CreateKeyGetID(DataKeyOptions options)
@@ -112,24 +103,6 @@ namespace QueryableEncryption
                                     {"keyId", dataKeyId2},
                                     {"path", new BsonString("medications")},
                                     {"bsonType", new BsonString("array")},
-                                },
-                                new BsonDocument
-                                {
-                                    {"keyId", dataKeyId3},
-                                    {"path", new BsonString("patientRecord.ssn")},
-                                    {"bsonType", new BsonString("string")},
-                                    {
-                                        "queries", new BsonDocument
-                                        {
-                                            {"queryType", new BsonString("equality")}
-                                        }
-                                    }
-                                },
-                                new BsonDocument
-                                {
-                                    {"keyId", dataKeyId4},
-                                    {"path", new BsonString("patientRecord.billing")},
-                                    {"bsonType", new BsonString("object")},
                                 },
                             }
                         }

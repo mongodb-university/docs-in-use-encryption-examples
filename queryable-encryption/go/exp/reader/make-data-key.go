@@ -10,25 +10,36 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+import (
+	"crypto/rand"
+	"io/ioutil"
+)
+
+func localMasterKey() []byte {
+	key := make([]byte, 96)
+	if _, err := rand.Read(key); err != nil {
+		log.Fatalf("Unable to create a random 96 byte data key: %v", err)
+	}
+	if err := ioutil.WriteFile("master-key.txt", key, 0644); err != nil {
+		log.Fatalf("Unable to write key to file: %v", err)
+	}
+	return key
+}
+
 func MakeKey() error {
 
+	localMasterKey()
+
 	// start-kmsproviders
-	provider := "gcp"
-	kmsProviders := map[string]map[string]interface{}{
-		provider: {
-			"email":      "<Your GCP Email>",
-			"privateKey": "<Your GCP Private Key>",
-		},
+	key, err := ioutil.ReadFile("master-key.txt")
+	if err != nil {
+		log.Fatalf("Could not read the key from master-key.txt: %v", err)
 	}
+	provider := "local"
+	kmsProviders := map[string]map[string]interface{}{"local": {"key": key}}
 	// end-kmsproviders
 
 	// start-datakeyopts
-	masterKey := map[string]interface{}{
-		"projectId": "<Your GCP Project ID>",
-		"location":  "<Your GCP Location>",
-		"keyRing":   "<Your GCP Key Ring>",
-		"keyName":   "<Your GCP Key Name>",
-	}
 	// end-datakeyopts
 
 	// start-create-index
@@ -75,30 +86,14 @@ func MakeKey() error {
 		_ = clientEnc.Close(context.TODO())
 	}()
 	dataKeyOpts1 := options.DataKey().
-		SetMasterKey(masterKey).
 		SetKeyAltNames([]string{"demoDataKey1"})
 	dataKeyID1, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts1)
 	if err != nil {
 		return fmt.Errorf("create data key error %v", err)
 	}
 	dataKeyOpts2 := options.DataKey().
-		SetMasterKey(masterKey).
 		SetKeyAltNames([]string{"demoDataKey2"})
 	dataKeyID2, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts2)
-	if err != nil {
-		return fmt.Errorf("create data key error %v", err)
-	}
-	dataKeyOpts3 := options.DataKey().
-		SetMasterKey(masterKey).
-		SetKeyAltNames([]string{"demoDataKey3"})
-	dataKeyID3, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts3)
-	if err != nil {
-		return fmt.Errorf("create data key error %v", err)
-	}
-	dataKeyOpts4 := options.DataKey().
-		SetMasterKey(masterKey).
-		SetKeyAltNames([]string{"demoDataKey4"})
-	dataKeyID4, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts4)
 	if err != nil {
 		return fmt.Errorf("create data key error %v", err)
 	}
@@ -126,21 +121,6 @@ func MakeKey() error {
 					"path":     "medications",
 					"bsonType": "array",
 					"keyId":    dataKeyID2,
-				},
-				{
-					"path":     "patientRecord.ssn",
-					"bsonType": "string",
-					"keyId":    dataKeyID3,
-					"queries": []bson.M{
-						{
-							"queryType": "equality",
-						},
-					},
-				},
-				{
-					"path":     "patientRecord.billing",
-					"bsonType": "object",
-					"keyId":    dataKeyID4,
 				},
 			},
 		},
