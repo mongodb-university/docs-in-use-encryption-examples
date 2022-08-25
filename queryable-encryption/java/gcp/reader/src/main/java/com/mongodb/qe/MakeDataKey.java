@@ -140,7 +140,8 @@ public class MakeDataKey {
                                 .append("queries", new BsonDocument().append("queryType", new BsonString("equality"))),
                         new BsonDocument().append("keyId", dataKeyId4)
                                 .append("path", new BsonString("patientRecord.billing"))
-                                .append("bsonType", new BsonString("object")))));
+                                .append("bsonType", new BsonString("object"))
+                        )));
         Map<String, BsonDocument> encryptedFieldsMap = new HashMap<String, BsonDocument>();
         encryptedFieldsMap.put(encryptedNameSpace, encFields);
 

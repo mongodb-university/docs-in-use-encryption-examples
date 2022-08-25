@@ -84,15 +84,15 @@ namespace QueryableEncryption
                         new BsonString("Atorvastatin"),
                         new BsonString("Levothyroxine")
                     };
-            var encryptedIndexed = clientEncryption.Encrypt(
+            var indexedEncrypted = clientEncryption.Encrypt(
                 patientId,
                 new EncryptOptions(algorithm: "Indexed", keyId: dataKeyId1, contentionFactor: 1),
                 CancellationToken.None);
-            var encryptedUnindexed = clientEncryption.Encrypt(
+            var unindexedEncrypted = clientEncryption.Encrypt(
                 medications,
                 new EncryptOptions(algorithm: "Unindexed", keyId: dataKeyId2),
                 CancellationToken.None);
-            collection.InsertOne(new BsonDocument { { "firstName", "Jon" }, { "patientId", encryptedIndexed }, { "medications", encryptedUnindexed } });
+            collection.InsertOne(new BsonDocument { { "firstName", "Jon" }, { "patientId", indexedEncrypted }, { "medications", unindexedEncrypted } });
             // end-insert
 
             // start-find

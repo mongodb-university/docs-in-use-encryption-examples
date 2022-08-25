@@ -97,18 +97,6 @@ func MakeKey() error {
 	if err != nil {
 		return fmt.Errorf("create data key error %v", err)
 	}
-	dataKeyOpts3 := options.DataKey().
-		SetKeyAltNames([]string{"demoDataKey3"})
-	dataKeyID3, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts3)
-	if err != nil {
-		return fmt.Errorf("create data key error %v", err)
-	}
-	dataKeyOpts4 := options.DataKey().
-		SetKeyAltNames([]string{"demoDataKey4"})
-	dataKeyID4, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts4)
-	if err != nil {
-		return fmt.Errorf("create data key error %v", err)
-	}
 	// end-create-dek
 
 	// start-create-enc-collection
@@ -133,21 +121,6 @@ func MakeKey() error {
 					"path":     "medications",
 					"bsonType": "array",
 					"keyId":    dataKeyID2,
-				},
-				{
-					"path":     "patientRecord.ssn",
-					"bsonType": "string",
-					"keyId":    dataKeyID3,
-					"queries": []bson.M{
-						{
-							"queryType": "equality",
-						},
-					},
-				},
-				{
-					"path":     "patientRecord.billing",
-					"bsonType": "object",
-					"keyId":    dataKeyID4,
 				},
 			},
 		},
@@ -178,7 +151,7 @@ func MakeKey() error {
 		return fmt.Errorf("Error creating collection: %v", err)
 	}
 	// end-create-enc-collection
-	print("Created Encrypted Collection\n")
+	fmt.Println("Created Encrypted Collection")
 
 	return nil
 }

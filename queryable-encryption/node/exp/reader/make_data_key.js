@@ -59,12 +59,6 @@ async function run() {
   const dek2 = await clientEnc.createDataKey(provider, {
     keyAltNames: ["dataKey2"],
   });
-  const dek3 = await clientEnc.createDataKey(provider, {
-    keyAltNames: ["dataKey3"],
-  });
-  const dek4 = await clientEnc.createDataKey(provider, {
-    keyAltNames: ["dataKey4"],
-  });
   // end-create-dek
 
   // start-create-enc-collection
@@ -81,17 +75,6 @@ async function run() {
           keyId: dek2,
           path: "medications",
           bsonType: "array",
-        },
-        {
-          keyId: dek3,
-          path: "patientRecord.ssn",
-          bsonType: "string",
-          queries: { queryType: "equality" },
-        },
-        {
-          keyId: dek4,
-          path: "patientRecord.billing",
-          bsonType: "object",
         },
       ],
     },

@@ -60,17 +60,17 @@ client_encryption = ClientEncryption(
 # start-insert
 patientId = 12345678
 medications = ["Atorvastatin", "Levothyroxine"]
-insert_payload_indexed = client_encryption.encrypt(
+indexed_insert_payload = client_encryption.encrypt(
     patientId, Algorithm.INDEXED, data_key_id_1, contention_factor=1
 )
-insert_payload_unindexed = client_encryption.encrypt(
+unindexed_insert_payload = client_encryption.encrypt(
     medications, Algorithm.UNINDEXED, data_key_id_2
 )
 coll.insert_one(
     {
         "firstName": "Jon",
-        "patientId": insert_payload_indexed,
-        "medications": insert_payload_unindexed,
+        "patientId": indexed_insert_payload,
+        "medications": unindexed_insert_payload,
     }
 )
 # end-insert

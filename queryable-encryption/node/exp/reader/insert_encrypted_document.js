@@ -62,12 +62,12 @@ async function run() {
     const patientId = 12345678;
     const medications = ["Atorvastatin", "Levothyroxine"];
 
-    const insertPayloadIndexed = await encryption.encrypt(patientId, {
+    const indexedInsertPayload = await encryption.encrypt(patientId, {
       algorithm: "Indexed",
       keyId: dek1._id,
       contentionFactor: 1,
     });
-    const insertPayloadUnindexed = await encryption.encrypt(medications, {
+    const unindexedInsertPayload = await encryption.encrypt(medications, {
       algorithm: "Unindexed",
       keyId: dek2._id,
     });
@@ -76,8 +76,8 @@ async function run() {
       .collection(secretCollection);
     await encryptedColl.insertOne({
       firstName: "Jon",
-      patientId: insertPayloadIndexed,
-      medications: insertPayloadUnindexed,
+      patientId: indexedInsertPayload,
+      medications: unindexedInsertPayload,
     });
     // end-insert
     // start-find

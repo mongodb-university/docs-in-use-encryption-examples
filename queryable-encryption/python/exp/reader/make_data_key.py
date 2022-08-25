@@ -59,8 +59,6 @@ client_encryption = ClientEncryption(
 
 data_key_id_1 = client_encryption.create_data_key(provider, key_alt_names=["dataKey1"])
 data_key_id_2 = client_encryption.create_data_key(provider, key_alt_names=["dataKey2"])
-data_key_id_3 = client_encryption.create_data_key(provider, key_alt_names=["dataKey3"])
-data_key_id_4 = client_encryption.create_data_key(provider, key_alt_names=["dataKey4"])
 # end-create-dek
 
 
@@ -80,17 +78,6 @@ encrypted_fields_map = {
                 "keyId": data_key_id_2,
                 "path": "medications",
                 "bsonType": "array",
-            },
-            {
-                "keyId": data_key_id_3,
-                "path": "patientRecord.ssn",
-                "bsonType": "string",
-                "queries": {"queryType": "equality"},
-            },
-            {
-                "keyId": data_key_id_4,
-                "path": "patientRecord.billing",
-                "bsonType": "object",
             },
         ],
     },

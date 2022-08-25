@@ -113,15 +113,15 @@ public class InsertEncryptedDocument {
         ArrayList<BsonString> medications = new ArrayList<>();
         medications.add(new BsonString("Atorvastatin"));
         medications.add(new BsonString("Levothyroxine"));
-        BsonBinary encryptedIndexed = clientEncryption.encrypt(patientId, new EncryptOptions("Indexed").keyId(dataKeyId1).contentionFactor(1L));
-        BsonBinary encryptedUnindexed = clientEncryption.encrypt(new BsonArray(medications), new EncryptOptions("Unindexed").keyId(dataKeyId2));
+        BsonBinary indexedEncrypted = clientEncryption.encrypt(patientId, new EncryptOptions("Indexed").keyId(dataKeyId1).contentionFactor(1L));
+        BsonBinary unindexedEncrypted = clientEncryption.encrypt(new BsonArray(medications), new EncryptOptions("Unindexed").keyId(dataKeyId2));
         MongoCollection<BsonDocument> collection = mongoClientSecure.getDatabase(db).getCollection(coll, BsonDocument.class);
-        collection.insertOne(new BsonDocument("firstName", new BsonString("Jon")).append("patientId", encryptedIndexed).append("medications", encryptedUnindexed));
+        collection.insertOne(new BsonDocument("firstName", new BsonString("Jon")).append("patientId", indexedEncrypted).append("medications", unindexedEncrypted));
         // end-insert
 
         // start-find
-        BsonBinary encryptedFindPayload = clientEncryption.encrypt(patientId, new EncryptOptions("Indexed").keyId(dataKeyId1).queryType("equality").contentionFactor(1L));
-        BsonDocument result = collection.find(eq("patientId", encryptedFindPayload)).first();
+        BsonBinary findPayloadEncrypted = clientEncryption.encrypt(patientId, new EncryptOptions("Indexed").keyId(dataKeyId1).queryType("equality").contentionFactor(1L));
+        BsonDocument result = collection.find(eq("patientId", findPayloadEncrypted)).first();
         System.out.println("Finding a document with manually encrypted field: " + result.toJson());
         // end-find
         client.close();
