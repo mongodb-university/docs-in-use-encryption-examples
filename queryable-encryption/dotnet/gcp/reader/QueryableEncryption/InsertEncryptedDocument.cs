@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -10,7 +11,8 @@ namespace QueryableEncryption
     {
         public static void Insert()
         {
-            var connectionString = "<Your MongoDB URI>";
+            var credentials = new YourCredentials().GetCredentials();
+            var connectionString = credentials["MONGODB_URI"];
             // start-key-vault
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             // end-key-vault
@@ -18,10 +20,12 @@ namespace QueryableEncryption
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
             const string provider = "gcp";
+            var gcpPrivateKey = credentials["GCP_PRIVATE_KEY"];
+            var gcpEmail = credentials["GCP_EMAIL"];
             var gcpKmsOptions = new Dictionary<string, object>
             {
-               { "privateKey", "<Your GCP Private Key>" },
-               { "email", "<Your GCP Email>" },
+               { "privateKey", gcpPrivateKey },
+               { "email", gcpEmail },
             };
             kmsProviders.Add(provider, gcpKmsOptions);
             // end-kmsproviders
@@ -97,7 +101,7 @@ namespace QueryableEncryption
             // start-extra-options
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
             // end-extra-options
 

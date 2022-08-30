@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -10,7 +11,8 @@ namespace QueryableEncryption
     {
         public static void Insert()
         {
-            var connectionString = "<Your MongoDB URI>";
+            var credentials = new YourCredentials().GetCredentials();
+            var connectionString = credentials["MONGODB_URI"];
             // start-key-vault
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             // end-key-vault
@@ -18,11 +20,14 @@ namespace QueryableEncryption
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
             const string provider = "azure";
+            var azureTenantId = credentials["AZURE_TENANT_ID"];
+            var azureClientId = credentials["AZURE_CLIENT_ID"];
+            var azureClientSecret = credentials["AZURE_CLIENT_SECRET"];
             var azureKmsOptions = new Dictionary<string, object>
             {
-               { "tenantId", "<Your Azure Tenant ID>" },
-               { "clientId", "<Your Azure Client ID>" },
-               { "clientSecret", "<Your Azure Client Secret>" },
+               { "tenantId", azureTenantId },
+               { "clientId", azureClientId },
+               { "clientSecret", azureClientSecret },
             };
             kmsProviders.Add(provider, azureKmsOptions);
             // end-kmsproviders
@@ -98,7 +103,7 @@ namespace QueryableEncryption
             // start-extra-options
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
             // end-extra-options
 

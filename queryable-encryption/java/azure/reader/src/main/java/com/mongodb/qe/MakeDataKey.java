@@ -54,26 +54,28 @@ public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
 
+        Map<String, String> credentials = YourCredentials.getCredentials();
+
         // start-kmsproviders
         String kmsProvider = "azure";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("tenantId", "<Azure account organization>");
-        providerDetails.put("clientId", "<Azure client ID>");
-        providerDetails.put("clientSecret", "<Azure client secret>");
+        providerDetails.put("tenantId", credentials.get("AZURE_TENANT_ID"));
+        providerDetails.put("clientId", credentials.get("AZURE_CLIENT_ID"));
+        providerDetails.put("clientSecret", credentials.get("AZURE_CLIENT_SECRET"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
         // start-datakeyopts
         BsonDocument masterKeyProperties = new BsonDocument();
         masterKeyProperties.put("provider", new BsonString(kmsProvider));
-        masterKeyProperties.put("keyName", new BsonString("<Azure key name>"));
-        masterKeyProperties.put("keyVaultEndpoint", new BsonString("<Azure key vault endpoint"));
+        masterKeyProperties.put("keyName", new BsonString(credentials.get("AZURE_KEY_NAME")));
+        masterKeyProperties.put("keyVaultEndpoint", new BsonString(credentials.get("AZURE_KEY_VAULT_ENDPOINT")));        
         // end-datakeyopts
 
 
         // start-create-index
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
         String keyVaultDb = "encryption";
         String keyVaultColl = "__keyVault";
         MongoClient keyVaultClient = MongoClients.create(connectionString);
@@ -145,7 +147,7 @@ public class MakeDataKey {
         encryptedFieldsMap.put(encryptedNameSpace, encFields);
 
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
 
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))

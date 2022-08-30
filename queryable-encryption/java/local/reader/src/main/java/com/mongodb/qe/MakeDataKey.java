@@ -56,6 +56,8 @@ import java.security.SecureRandom;
 public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
+
+        Map<String, String> credentials = YourCredentials.getCredentials();
         byte[] localMasterKeyWrite = new byte[96];
         new SecureRandom().nextBytes(localMasterKeyWrite);
         try (FileOutputStream stream = new FileOutputStream("master-key.txt")) {
@@ -84,7 +86,7 @@ public class MakeDataKey {
 
 
         // start-create-index
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
         String keyVaultDb = "encryption";
         String keyVaultColl = "__keyVault";
         MongoClient keyVaultClient = MongoClients.create(connectionString);
@@ -152,7 +154,7 @@ public class MakeDataKey {
         encryptedFieldsMap.put(encryptedNameSpace, encFields);
 
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
 
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))

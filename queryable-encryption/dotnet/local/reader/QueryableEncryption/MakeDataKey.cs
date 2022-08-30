@@ -5,6 +5,7 @@ using System.Threading;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -12,6 +13,7 @@ namespace QueryableEncryption
     {
         public static void MakeKey()
         {
+            var credentials = new YourCredentials().GetCredentials();
             using (var randomNumberGenerator = System.Security.Cryptography.RandomNumberGenerator.Create())
             {
                 var bytes = new byte[96];
@@ -34,7 +36,7 @@ namespace QueryableEncryption
 
 
             // start-create-index
-            var connectionString = "<Your MongoDB URI>";
+            var connectionString = credentials["MONGODB_URI"];
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             var keyVaultClient = new MongoClient(connectionString);
             var indexOptions = new CreateIndexOptions<BsonDocument>
@@ -132,7 +134,7 @@ namespace QueryableEncryption
 
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
 
             var autoEncryptionOptions = new AutoEncryptionOptions(

@@ -7,28 +7,31 @@ const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
 const secretDB = "medicalRecords";
 const secretCollection = "patients";
 
+const { getCredentials } = require("./your_credentials");
+credentials = getCredentials();
+
 // start-kmsproviders
 const provider = "gcp";
 const kmsProviders = {
   gcp: {
-    email: "<Your GCP Email>",
-    privateKey: "<Your GCP Private Key>",
+    email: credentials["GCP_EMAIL"],
+    privateKey: credentials["GCP_PRIVATE_KEY"],
   },
 };
 // end-kmsproviders
 
 // start-datakeyopts
 const masterKey = {
-  projectId: "<Your Project ID>",
-  location: "<Your Key Location>",
-  keyRing: "<Your Key Ring>",
-  keyName: "<Your Key Name>",
+  projectId: credentials["GCP_PROJECT_ID"],
+  location: credentials["GCP_LOCATION"],
+  keyRing: credentials["GCP_KEY_RING"],
+  keyName: credentials["GCP_KEY_NAME"],
 };
 // end-datakeyopts
 
 async function run() {
   // start-create-index
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const keyVaultClient = new MongoClient(uri);
   await keyVaultClient.connect();
   const keyVaultDB = keyVaultClient.db(keyVaultDatabase);
@@ -97,7 +100,7 @@ async function run() {
     },
   };
   const extraOptions = {
-    cryptSharedLibPath: "<path to FLE Shared Library>",
+    cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
   };
   const encClient = new MongoClient(uri, {
     autoEncryption: {

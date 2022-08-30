@@ -5,24 +5,30 @@ import base64
 import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
+from your_credentials import get_credentials
+
+credentials = get_credentials()
 
 
 # start-kmsproviders
 provider = "aws"
 kms_providers = {
     provider: {
-        "accessKeyId": "<IAM User Access Key ID>",
-        "secretAccessKey": "<IAM User Secret Access Key>",
+        "accessKeyId": credentials["AWS_ACCESS_KEY_ID"],
+        "secretAccessKey": credentials["AWS_SECRET_ACCESS_KEY"],
     }
 }
 # end-kmsproviders
 
 # start-datakeyopts
-master_key = {"region": "<Master Key AWS Region>", "key": "<Master Key ARN>"}
+master_key = {
+    "region": credentials["AWS_KEY_REGION"],
+    "key": credentials["AWS_KEY_ARN"],
+}
 # end-datakeyopts
 
 # start-create-index
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 key_vault_coll = "__keyVault"
 key_vault_db = "encryption"
@@ -41,6 +47,7 @@ key_vault_client[key_vault_db][key_vault_coll].create_index(
 )
 # end-create-index
 
+
 # start-create-dek
 key_vault_database = "encryption"
 key_vault_collection = "__keyVault"
@@ -53,7 +60,9 @@ client_encryption = ClientEncryption(
     client,
     CodecOptions(uuid_representation=STANDARD),
 )
-data_key_id = client_encryption.create_data_key(provider, master_key)
+data_key_id = client_encryption.create_data_key(
+    provider, master_key, key_alt_names=["demo-data-key"]
+)
 
 base_64_data_key_id = base64.b64encode(data_key_id)
 print("DataKeyId [base64]: ", base_64_data_key_id)

@@ -48,14 +48,14 @@ public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
 
-
+        Map<String, String> credentials = YourCredentials.getCredentials();
         // start-key-vault
         String db = "medicalRecords";
         String coll = "patients";
         String keyVaultDb = "encryption";
         String keyVaultColl = "__keyVault";
         String keyVaultNamespace = String.format("%1$s.%2$s", keyVaultDb, keyVaultColl);
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
         // end-key-vault
 
         // start-kmsproviders
@@ -81,7 +81,7 @@ public class InsertEncryptedDocument {
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared library>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
         // end-extra-options
 
         // start-client

@@ -7,27 +7,30 @@ const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
 const secretDB = "medicalRecords";
 const secretCollection = "patients";
 
+const { getCredentials } = require("./your_credentials");
+credentials = getCredentials();
+
 // start-kmsproviders
 const provider = "azure";
 const kmsProviders = {
   azure: {
-    tenantId: "<Your Tenant ID>",
-    clientId: "<Your Client ID>",
-    clientSecret: "<Your Client Secret>",
+    tenantId: credentials["AZURE_TENANT_ID"],
+    clientId: credentials["AZURE_CLIENT_ID"],
+    clientSecret: credentials["AZURE_CLIENT_SECRET"],
   },
 };
 // end-kmsproviders
 
 // start-datakeyopts
 const masterKey = {
-  keyVaultEndpoint: "<Your Key Vault Endpoint>",
-  keyName: "<Your Key Name>",
+  keyVaultEndpoint: credentials["AZURE_KEY_VAULT_ENDPOINT"],
+  keyName: credentials["AZURE_KEY_NAME"],
 };
 // end-datakeyopts
 
 async function run() {
   // start-create-index
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const keyVaultClient = new MongoClient(uri);
   await keyVaultClient.connect();
   const keyVaultDB = keyVaultClient.db(keyVaultDatabase);
@@ -96,7 +99,7 @@ async function run() {
     },
   };
   const extraOptions = {
-    cryptSharedLibPath: "<path to FLE Shared Library>",
+    cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
   };
   const encClient = new MongoClient(uri, {
     autoEncryption: {

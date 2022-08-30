@@ -5,6 +5,7 @@ using System.Threading;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -12,6 +13,7 @@ namespace QueryableEncryption
     {
         public static void MakeKey()
         {
+            var credentials = new YourCredentials().GetCredentials();
             using (var randomNumberGenerator = System.Security.Cryptography.RandomNumberGenerator.Create())
             {
                 var bytes = new byte[96];
@@ -34,7 +36,7 @@ namespace QueryableEncryption
 
 
             // start-create-index
-            var connectionString = "<Your MongoDB URI>";
+            var connectionString = credentials["MONGODB_URI"];
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             var keyVaultClient = new MongoClient(connectionString);
             var indexOptions = new CreateIndexOptions<BsonDocument>
@@ -62,6 +64,8 @@ namespace QueryableEncryption
             var clientEncryption = new ClientEncryption(clientEncryptionOptions);
             var dataKeyOptions1 = new DataKeyOptions(alternateKeyNames: new List<string> { "dataKey1" });
             var dataKeyOptions2 = new DataKeyOptions(alternateKeyNames: new List<string> { "dataKey2" });
+            var dataKeyOptions3 = new DataKeyOptions(alternateKeyNames: new List<string> { "dataKey3" });
+            var dataKeyOptions4 = new DataKeyOptions(alternateKeyNames: new List<string> { "dataKey4" });
 
 
             BsonBinaryData CreateKeyGetID(DataKeyOptions options)
@@ -104,6 +108,24 @@ namespace QueryableEncryption
                                     {"path", new BsonString("medications")},
                                     {"bsonType", new BsonString("array")},
                                 },
+                                new BsonDocument
+                                {
+                                    {"keyId", dataKeyId3},
+                                    {"path", new BsonString("patientRecord.ssn")},
+                                    {"bsonType", new BsonString("string")},
+                                    {
+                                        "queries", new BsonDocument
+                                        {
+                                            {"queryType", new BsonString("equality")}
+                                        }
+                                    }
+                                },
+                                new BsonDocument
+                                {
+                                    {"keyId", dataKeyId4},
+                                    {"path", new BsonString("patientRecord.billing")},
+                                    {"bsonType", new BsonString("object")},
+                                },
                             }
                         }
                     }
@@ -112,7 +134,7 @@ namespace QueryableEncryption
 
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
 
             var autoEncryptionOptions = new AutoEncryptionOptions(

@@ -17,6 +17,8 @@ import (
 
 func Insert() error {
 
+	credentials := GetCredentials()
+
 	// start-key-vault
 	keyVaultNamespace := "encryption.__keyVault"
 	// end-key-vault
@@ -36,14 +38,7 @@ func Insert() error {
 	schema_template := `{
 		"bsonType": "object",
 		"encryptMetadata": {
-			"keyId": [
-				{
-					"$binary": {
-						"base64": "%s",
-						"subType": "04"
-					}
-				}
-			]
+			"keyId": "/key-id"
 		},
 		"properties": {
 			"insurance": {
@@ -52,7 +47,7 @@ func Insert() error {
 					"policyNumber": {
 						"encrypt": {
 							"bsonType": "int",
-							"algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+							"algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 						}
 					}
 				}
@@ -72,7 +67,7 @@ func Insert() error {
 			"ssn": {
 				"encrypt": {
 					"bsonType": "int",
-					"algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
+					"algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 				}
 			}
 		}
@@ -87,13 +82,14 @@ func Insert() error {
 	}
 	// end-schema
 
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 
 	// start-extra-options
 	extraOptions := map[string]interface{}{
-		"mongocryptdSpawnPath": "/usr/local/bin/mongocryptd",
+		"mongocryptdSpawnPath": credentials["MONGOCRYPTD_PATH"],
 	}
 	// end-extra-options
+
 	regularClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return fmt.Errorf("Connect error for regular client: %v", err)
@@ -121,6 +117,7 @@ func Insert() error {
 		"name":      "Jon Doe",
 		"ssn":       241014209,
 		"bloodType": "AB+",
+		"key-id":    "demo-data-key",
 		"medicalRecords": []map[string]interface{}{{
 			"weight":        180,
 			"bloodPressure": "120/80",
@@ -149,7 +146,7 @@ func Insert() error {
 
 	fmt.Println("Finding a document with encrypted client, searching on an encrypted field")
 	var resultSecure bson.M
-	err = secureClient.Database(dbName).Collection(collName).FindOne(context.TODO(), bson.D{{"ssn", "241014209"}}).Decode(&resultSecure)
+	err = secureClient.Database(dbName).Collection(collName).FindOne(context.TODO(), bson.D{{"name", "Jon Doe"}}).Decode(&resultSecure)
 	if err != nil {
 		panic(err)
 	}

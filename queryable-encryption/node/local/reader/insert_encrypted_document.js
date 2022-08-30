@@ -1,5 +1,8 @@
 const { MongoClient, Binary } = require("mongodb");
 
+const { getCredentials } = require("./your_credentials");
+credentials = getCredentials();
+
 // start-key-vault
 const eDB = "encryption";
 const eKV = "__keyVault";
@@ -21,7 +24,7 @@ const kmsProviders = {
 
 async function run() {
   // start-schema
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const unencryptedClient = new MongoClient(uri);
   await unencryptedClient.connect();
   const keyVaultClient = unencryptedClient.db(eDB).collection(eKV);
@@ -66,7 +69,7 @@ async function run() {
 
   // start-extra-options
   const extraOptions = {
-    cryptSharedLibPath: "<path to FLE Shared Library>",
+    cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
   };
   // end-extra-options
 

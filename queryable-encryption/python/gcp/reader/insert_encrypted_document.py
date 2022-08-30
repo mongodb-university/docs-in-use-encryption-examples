@@ -6,6 +6,9 @@ import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
 import pprint
+from your_credentials import get_credentials
+
+credentials = get_credentials()
 
 # start-key-vault
 key_vault_db = "encryption"
@@ -14,14 +17,18 @@ key_vault_namespace = "encryption.__keyVault"
 # end-key-vault
 
 # start-kmsproviders
+provider = "azure"
 provider = "gcp"
 kms_providers = {
-    provider: {"email": "<your GCP email>", "privateKey": "<your GCP private key>"}
+    provider: {
+        "email": credentials["GCP_EMAIL"],
+        "privateKey": credentials["GCP_PRIVATE_KEY"],
+    }
 }
 # end-kmsproviders
 
 # start-schema
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 unencryptedClient = MongoClient(connection_string)
 keyVaultClient = unencryptedClient[key_vault_db][key_vault_coll]
@@ -69,7 +76,7 @@ auto_encryption = AutoEncryptionOpts(
     key_vault_namespace,
     encrypted_fields_map=encrypted_fields_map,
     schema_map=None,
-    crypt_shared_lib_path="<path to FLE Shared Library>",
+    crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 # end-extra-options
 

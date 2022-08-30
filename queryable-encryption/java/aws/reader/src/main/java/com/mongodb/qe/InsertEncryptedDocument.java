@@ -54,7 +54,7 @@ public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
 
-
+        Map<String, String> credentials = YourCredentials.getCredentials();
         String encryptedDbName = "medicalRecords";
         String encryptedCollName = "patients";
         String encryptedNameSpace = encryptedDbName + "." + encryptedCollName;
@@ -65,14 +65,14 @@ public class InsertEncryptedDocument {
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
         // end-key-vault
 
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
 
         // start-kmsproviders
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         String kmsProvider = "aws";
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("accessKeyId", "<IAM User Access Key ID>");
-        providerDetails.put("secretAccessKey", "<IAM User Secret Access Key>");
+        providerDetails.put("accessKeyId", credentials.get("AWS_ACCESS_KEY_ID"));
+        providerDetails.put("secretAccessKey", credentials.get("AWS_SECRET_ACCESS_KEY"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
@@ -109,7 +109,7 @@ public class InsertEncryptedDocument {
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
         // end-extra-options
 
         // start-client

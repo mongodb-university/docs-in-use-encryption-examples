@@ -12,25 +12,27 @@ import (
 
 func MakeKey() error {
 
+	credentials := GetCredentials()
+
 	// start-kmsproviders
 	provider := "aws"
 	kmsProviders := map[string]map[string]interface{}{
 		provider: {
-			"accessKeyId":     "<Your AWS Access Key ID>",
-			"secretAccessKey": "<Your AWS Secret Access Key>",
+			"accessKeyId":     credentials["AWS_ACCESS_KEY_ID"],
+			"secretAccessKey": credentials["AWS_SECRET_ACCESS_KEY"],
 		},
 	}
 	// end-kmsproviders
 
 	// start-datakeyopts
 	masterKey := map[string]interface{}{
-		"key":    "<Your AWS Key ARN>",
-		"region": "<Your AWS Key Region>",
+		"key":    credentials["AWS_KEY_ARN"],
+		"region": credentials["AWS_KEY_REGION"],
 	}
 	// end-datakeyopts
 
 	// start-create-index
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 	keyVaultClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return fmt.Errorf("Connect error for regular client: %v", err)
@@ -144,7 +146,7 @@ func MakeKey() error {
 		},
 	}
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath": "<Your Crypt Shared lib Path>",
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 
 	autoEncryptionOpts := options.AutoEncryption().

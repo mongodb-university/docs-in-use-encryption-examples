@@ -5,6 +5,7 @@ using System.Threading;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -12,14 +13,17 @@ namespace QueryableEncryption
     {
         public static void MakeKey()
         {
+            var credentials = new YourCredentials().GetCredentials();
 
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
             const string provider = "aws";
+            var awsAccessKey = credentials["AWS_ACCESS_KEY_ID"];
+            var awsSecretAccessKey = credentials["AWS_SECRET_ACCESS_KEY"];
             var awsKmsOptions = new Dictionary<string, object>
             {
-               { "accessKeyId", "<Your AWS Access Key ID>" },
-               { "secretAccessKey", "<Your AWS Secret Access Key>" }
+               { "accessKeyId", awsAccessKey },
+               { "secretAccessKey", awsSecretAccessKey }
             };
             kmsProviders.Add(provider, awsKmsOptions);
             // end-kmsproviders
@@ -27,19 +31,21 @@ namespace QueryableEncryption
             // start-datakeyopts
             DataKeyOptions GetDataKeyOptions(List<string> altNames)
             {
+                var awsKeyARN = credentials["AWS_KEY_ARN"]; // e.g. "arn:aws:kms:us-east-2:111122223333:alias/test-key"
+                var awsKeyRegion = credentials["AWS_KEY_REGION"];
                 var dataKeyOptions = new DataKeyOptions(
                    alternateKeyNames: altNames,
                    masterKey: new BsonDocument
                    {
-                       { "region", "<Your AWS Key Region>" },
-                       { "key", "<Your AWS Key ARN>" },
+                       { "region", awsKeyRegion },
+                       { "key", awsKeyARN },
                    });
                 return dataKeyOptions;
             }
             // end-datakeyopts
 
             // start-create-index
-            var connectionString = "<Your MongoDB URI>";
+            var connectionString = credentials["MONGODB_URI"];
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             var keyVaultClient = new MongoClient(connectionString);
             var indexOptions = new CreateIndexOptions<BsonDocument>
@@ -137,7 +143,7 @@ namespace QueryableEncryption
 
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
 
             var autoEncryptionOptions = new AutoEncryptionOptions(

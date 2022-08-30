@@ -18,6 +18,8 @@ import (
 
 func Insert() error {
 
+	credentials := GetCredentials()
+
 	// start-key-vault
 	keyVaultColl := "__keyVault"
 	keyVaultDb := "encryption"
@@ -34,7 +36,7 @@ func Insert() error {
 	kmsProviders := map[string]map[string]interface{}{"local": {"key": key}}
 	// end-kmsproviders
 
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 
 	// start-schema
 	regularClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
@@ -110,7 +112,7 @@ func Insert() error {
 
 	// start-extra-options
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath": "<Your Crypt Shared lib Path>",
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 	// end-extra-options
 

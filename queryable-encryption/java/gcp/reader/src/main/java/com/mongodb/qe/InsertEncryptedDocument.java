@@ -54,7 +54,7 @@ public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
 
-
+        Map<String, String> credentials = YourCredentials.getCredentials();
         String encryptedDbName = "medicalRecords";
         String encryptedCollName = "patients";
         String encryptedNameSpace = encryptedDbName + "." + encryptedCollName;
@@ -65,14 +65,14 @@ public class InsertEncryptedDocument {
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
         // end-key-vault
 
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
 
         // start-kmsproviders
         String kmsProvider = "gcp";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("email", "<Your GCP Email Address>");
-        providerDetails.put("privateKey", "<Your GCP Private Key>");
+        providerDetails.put("email", credentials.get("GCP_EMAIL"));
+        providerDetails.put("privateKey", credentials.get("GCP_PRIVATE_KEY"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
@@ -109,7 +109,7 @@ public class InsertEncryptedDocument {
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
         // end-extra-options
 
         // start-client

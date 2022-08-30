@@ -8,6 +8,9 @@ from pymongo.encryption import (
     QueryType,
 )
 import pprint
+from your_credentials import get_credentials
+
+credentials = get_credentials()
 
 # start-key-vault
 key_vault_namespace = "encryption.__keyVault"
@@ -27,7 +30,7 @@ kms_providers = {
 # end-kmsproviders
 
 # start-retrieve-deks
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 client = MongoClient(connection_string)
 key_vault = client[key_vault_db_name][key_vault_coll_name]
 
@@ -41,7 +44,7 @@ opts = AutoEncryptionOpts(
     key_vault.full_name,
     bypass_query_analysis=True,
     key_vault_client=client,
-    crypt_shared_lib_path="<path to FLE Shared Library>",
+    crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 # end-extra-options
 

@@ -5,28 +5,35 @@ import base64
 import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
+from your_credentials import get_credentials
+
+credentials = get_credentials()
 
 import os
 
 # start-kmsproviders
+provider = "azure"
 provider = "gcp"
 kms_providers = {
-    provider: {"email": "<your GCP email>", "privateKey": "<your GCP private key>"}
+    provider: {
+        "email": credentials["GCP_EMAIL"],
+        "privateKey": credentials["GCP_PRIVATE_KEY"],
+    }
 }
 # end-kmsproviders
 
 # start-datakeyopts
 master_key = {
-    "projectId": "<GCP project identifier>",
-    "location": "<GCP region>",
-    "keyRing": "<GCP key ring name>",
-    "keyName": "<GCP key name>",
+    "projectId": credentials["GCP_PROJECT_ID"],
+    "location": credentials["GCP_LOCATION"],
+    "keyRing": credentials["GCP_KEY_RING"],
+    "keyName": credentials["GCP_KEY_NAME"],
 }
 # end-datakeyopts
 
 
 # start-create-index
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 key_vault_coll = "__keyVault"
 key_vault_db = "encryption"
@@ -107,7 +114,7 @@ auto_encryption = AutoEncryptionOpts(
     key_vault_namespace,
     encrypted_fields_map=encrypted_fields_map,
     schema_map=None,
-    crypt_shared_lib_path="<path to FLE Shared Library>",
+    crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 
 secure_client = MongoClient(connection_string, auto_encryption_opts=auto_encryption)

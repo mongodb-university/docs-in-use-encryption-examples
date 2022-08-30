@@ -13,6 +13,8 @@ import (
 
 func Insert() error {
 
+	credentials := GetCredentials()
+
 	// start-key-vault
 	keyVaultColl := "__keyVault"
 	keyVaultDb := "encryption"
@@ -24,14 +26,14 @@ func Insert() error {
 	// start-kmsproviders
 	kmsProviders := map[string]map[string]interface{}{
 		"azure": {
-			"tenantId":     "<Your Azure Tenant ID>",
-			"clientId":     "<Your Azure Client ID>",
-			"clientSecret": "<Your Azure Client Secret>",
+			"tenantId":     credentials["AZURE_TENANT_ID"],
+			"clientId":     credentials["AZURE_CLIENT_ID"],
+			"clientSecret": credentials["AZURE_CLIENT_SECRET"],
 		},
 	}
 	// end-kmsproviders
 
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 
 	// start-schema
 	regularClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
@@ -107,7 +109,7 @@ func Insert() error {
 
 	// start-extra-options
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath": "<Your Crypt Shared lib Path>",
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 	// end-extra-options
 

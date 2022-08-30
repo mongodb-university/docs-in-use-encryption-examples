@@ -28,6 +28,8 @@ func localMasterKey() []byte {
 
 func MakeKey() error {
 
+	credentials := GetCredentials()
+
 	localMasterKey()
 
 	// start-kmsproviders
@@ -43,7 +45,7 @@ func MakeKey() error {
 	// end-datakeyopts
 
 	// start-create-index
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 	keyVaultClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return fmt.Errorf("Connect error for regular client: %v", err)
@@ -97,6 +99,18 @@ func MakeKey() error {
 	if err != nil {
 		return fmt.Errorf("create data key error %v", err)
 	}
+	dataKeyOpts3 := options.DataKey().
+		SetKeyAltNames([]string{"demoDataKey3"})
+	dataKeyID3, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts3)
+	if err != nil {
+		return fmt.Errorf("create data key error %v", err)
+	}
+	dataKeyOpts4 := options.DataKey().
+		SetKeyAltNames([]string{"demoDataKey4"})
+	dataKeyID4, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts4)
+	if err != nil {
+		return fmt.Errorf("create data key error %v", err)
+	}
 	// end-create-dek
 
 	// start-create-enc-collection
@@ -122,11 +136,26 @@ func MakeKey() error {
 					"bsonType": "array",
 					"keyId":    dataKeyID2,
 				},
+				{
+					"path":     "patientRecord.ssn",
+					"bsonType": "string",
+					"keyId":    dataKeyID3,
+					"queries": []bson.M{
+						{
+							"queryType": "equality",
+						},
+					},
+				},
+				{
+					"path":     "patientRecord.billing",
+					"bsonType": "object",
+					"keyId":    dataKeyID4,
+				},
 			},
 		},
 	}
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath": "<Your Crypt Shared lib Path>",
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 
 	autoEncryptionOpts := options.AutoEncryption().
