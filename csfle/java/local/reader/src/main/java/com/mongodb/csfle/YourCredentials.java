@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class YourValues {
+public class YourCredentials {
     private static Map<String, String> yourCredentials;
     static {
         yourCredentials = new HashMap<>();

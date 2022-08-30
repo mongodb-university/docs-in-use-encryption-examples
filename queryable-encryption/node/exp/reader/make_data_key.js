@@ -7,7 +7,7 @@ const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
 const secretDB = "medicalRecords";
 const secretCollection = "patients";
 
-const { getCredentials } = require("./your_values");
+const { getCredentials } = require("./your_credentials");
 credentials = getCredentials();
 
 const fs = require("fs");

@@ -1,4 +1,4 @@
-package com.mongodb.csfle;
+package com.mongodb.qe;
 /*
  * Copyright 2008-present MongoDB, Inc.
 
@@ -22,21 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class YourValues {
+public class YourCredentials {
     private static Map<String, String> yourCredentials;
     static {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
-        yourCredentials.put("MONGOCRYPTD_PATH", "<path to mongocryptd>");
-        // GCP Credentials
-        yourCredentials.put("GCP_EMAIL", "<your GCP email>");
-        yourCredentials.put("GCP_PRIVATE_KEY", "<your GCP private key>");
-        yourCredentials.put("GCP_PROJECT_ID", "<your project id>");
-        yourCredentials.put("GCP_LOCATION", "<your location>");
-        yourCredentials.put("GCP_KEY_RING", "<your key ring>");
-        yourCredentials.put("GCP_KEY_NAME", "<your key name>");
-        yourCredentials.put("GCP_KEY_VERSION", "<your key version>");
+        yourCredentials.put("SHARED_LIB_PATH", "<path to automatic encryption shared library>");
 
     }
     private static void checkPlaceholders() throws Exception {

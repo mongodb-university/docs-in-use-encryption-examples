@@ -22,13 +22,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class YourValues {
+public class YourCredentials {
     private static Map<String, String> yourCredentials;
     static {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
         yourCredentials.put("SHARED_LIB_PATH", "<path to automatic encryption shared library>");
+        // AWS Credentials
+        yourCredentials.put("AWS_ACCESS_KEY_ID", "<your AWS access key ID here>");
+        yourCredentials.put("AWS_SECRET_ACCESS_KEY", "<your AWS secret access key here>");
+        yourCredentials.put("AWS_KEY_REGION", "<your AWS key region>");
+        yourCredentials.put("AWS_KEY_ARN", "<your AWS key ARN>");
 
     }
     private static void checkPlaceholders() throws Exception {

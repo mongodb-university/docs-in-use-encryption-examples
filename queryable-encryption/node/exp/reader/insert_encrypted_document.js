@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const { ClientEncryption } = require("mongodb-client-encryption");
 
-const { getCredentials } = require("./your_values");
+const { getCredentials } = require("./your_credentials");
 credentials = getCredentials();
 
 // start-key-vault

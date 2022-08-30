@@ -48,7 +48,7 @@ import com.mongodb.client.model.IndexOptions;
 public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
-        Map<String, String> credentials = YourValues.getCredentials();
+        Map<String, String> credentials = YourCredentials.getCredentials();
 
         // start-kmsproviders
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();

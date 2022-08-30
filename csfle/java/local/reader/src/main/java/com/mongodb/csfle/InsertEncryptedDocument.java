@@ -51,7 +51,7 @@ import java.security.SecureRandom;
 public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
-        Map<String, String> credentials = YourValues.getCredentials();
+        Map<String, String> credentials = YourCredentials.getCredentials();
         String recordsDb = "medicalRecords";
         String recordsColl = "patients";
         

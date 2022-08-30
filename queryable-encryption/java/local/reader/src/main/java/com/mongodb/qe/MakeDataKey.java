@@ -57,7 +57,7 @@ public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
 
-        Map<String, String> credentials = YourValues.getCredentials();
+        Map<String, String> credentials = YourCredentials.getCredentials();
         byte[] localMasterKeyWrite = new byte[96];
         new SecureRandom().nextBytes(localMasterKeyWrite);
         try (FileOutputStream stream = new FileOutputStream("master-key.txt")) {

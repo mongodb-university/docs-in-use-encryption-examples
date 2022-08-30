@@ -22,18 +22,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class YourValues {
+public class YourCredentials {
     private static Map<String, String> yourCredentials;
     static {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
         yourCredentials.put("MONGOCRYPTD_PATH", "<path to mongocryptd>");
-        // KMIP Credentials
-        yourCredentials.put("KMIP_KMS_ENDPOINT", "<endpoint for your KMIP KMS. Default is 'localhost:5698'>");
-        yourCredentials.put("KMIP_TLS_CA_FILE", "<full path to your KMIP certificate authority file. Default is '<path to this repo>/kmip_utils/certs/ca.pem'>");
-        yourCredentials.put("KMIP_TLS_CERT_FILE", "<full path to your client certificate file. Default is '<path to this repo>/kmip_utils/certs/client.pem'>");
-        yourCredentials.put("KMIP_TLS_CERT_P12", "<full path to your client certificate p12 file. Default is '<path to this repo>/kmip_utils/certs/pcks_client.p12'>");
+        // Azure Credentials
+        yourCredentials.put("AZURE_TENANT_ID", "<your Azure tenant ID here>");
+        yourCredentials.put("AZURE_CLIENT_ID", "<your Azure client ID here>");
+        yourCredentials.put("AZURE_CLIENT_SECRET", "<your cleint secret here>");
+        yourCredentials.put("AZURE_KEY_NAME", "<your key name here>");
+        yourCredentials.put("AZURE_KEY_VERSION", "<your key version here>");
+        yourCredentials.put("AZURE_KEY_VAULT_ENDPOINT", "<your key vault endpoint here>");
 
     }
     private static void checkPlaceholders() throws Exception {
