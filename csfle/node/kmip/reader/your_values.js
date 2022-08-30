@@ -27,7 +27,7 @@ check if credentials object contains placeholder values
 **/
 function checkForPlaceholders() {
   const errorBuffer = Array();
-  const placeholderPattern = /^<*.>$/;
+  const placeholderPattern = /^<.*>$/;
   for (const [key, value] of Object.entries(credentials)) {
     // check for placeholder text
     if (`${value}`.match(placeholderPattern)) {
@@ -42,7 +42,7 @@ function checkForPlaceholders() {
   // raise an error if errors in buffer
   if (errorBuffer.length > 0) {
     message = errorBuffer.join("\n");
-    throw ValueError(message);
+    throw message;
   }
 }
 

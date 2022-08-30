@@ -47,6 +47,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
+
         Map<String, String> credentials = YourValues.getCredentials();
         // start-key-vault
         String db = "medicalRecords";

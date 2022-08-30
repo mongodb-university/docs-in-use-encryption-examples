@@ -18,7 +18,7 @@ _credentials = {
 def check_for_placeholders():
     """check if credentials object contains placeholder values"""
     error_buffer = []
-    placeholder_pattern = re.compile("^<*.>$")
+    placeholder_pattern = re.compile("^<.*>$")
     for key, value in _credentials.items():
         # check for placeholder text
         if placeholder_pattern.match(str(value)):

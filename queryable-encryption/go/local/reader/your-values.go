@@ -16,7 +16,7 @@ var credentials = map[string]string{
 // check if credentials object contains placeholder values
 func check_for_placeholders() {
 	var error_buffer []string
-	placeholder_pattern, _ := regexp.Compile("^<*.>$")
+	placeholder_pattern, _ := regexp.Compile("^<.*>$")
 	for key, value := range credentials {
 		// check for placeholder text
 		if placeholder_pattern.MatchString(string(value)) {

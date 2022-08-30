@@ -23,7 +23,7 @@ namespace Credentials
 
         private void CheckThatValuesAreSet()
         {
-            var placeholder = new Regex("<*.>$");
+            var placeholder = new Regex("^<.*>$");
             var errorBuffer = new List<String>();
             foreach (KeyValuePair<string, string> entry in credentials)
             {

@@ -26,14 +26,13 @@ public class YourValues {
     private static Map<String, String> yourCredentials;
     static {
         yourCredentials = new HashMap<>();
-        yourCredentials.put("ar01", "Intro to Map");
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
         yourCredentials.put("SHARED_LIB_PATH", "<path to automatic encryption shared library>");
 
     }
     private static void checkPlaceholders() throws Exception {
-        Pattern p = Pattern.compile("<*.>$");
+        Pattern p = Pattern.compile("<.*>$");
         ArrayList<String> errorBuffer = new ArrayList<String>();
         for (Map.Entry<String,String> entry : yourCredentials.entrySet()) {
             if(p.matcher(String.valueOf(entry.getValue())).matches()){

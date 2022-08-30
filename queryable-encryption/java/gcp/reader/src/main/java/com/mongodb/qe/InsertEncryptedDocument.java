@@ -53,6 +53,7 @@ import org.bson.Document;
 public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
+
         Map<String, String> credentials = YourValues.getCredentials();
         String encryptedDbName = "medicalRecords";
         String encryptedCollName = "patients";
