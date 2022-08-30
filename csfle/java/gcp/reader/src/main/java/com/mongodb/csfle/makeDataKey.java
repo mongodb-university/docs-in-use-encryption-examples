@@ -45,30 +45,31 @@ import com.mongodb.client.model.IndexOptions;
  * - Locates existing local encryption key from encryption.__keyVault collection, or from a KMS
  * - Prints base 64-encoded value of the data encryption key
  */
-public class makeDataKey {
+public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
+        Map<String, String> credentials = YourValues.getCredentials();
 
         // start-kmsproviders
         String kmsProvider = "gcp";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("email", "<Your GCP Email Address>");
-        providerDetails.put("privateKey", "<Your GCP Private Key>");
+        providerDetails.put("email", credentials.get("GCP_EMAIL"));
+        providerDetails.put("privateKey", credentials.get("GCP_PRIVATE_KEY"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
         // start-datakeyopts
         BsonDocument masterKeyProperties = new BsonDocument();
         masterKeyProperties.put("provider", new BsonString(kmsProvider));
-        masterKeyProperties.put("projectId", new BsonString("<Your GCP Project ID>"));
-        masterKeyProperties.put("location", new BsonString("<Your GCP Key Location>"));
-        masterKeyProperties.put("keyRing", new BsonString("<Your GCP Key Ring>"));
-        masterKeyProperties.put("keyName", new BsonString("<Your GCP Key Name>"));
+        masterKeyProperties.put("projectId", new BsonString(credentials.get("GCP_PROJECT_ID")));
+        masterKeyProperties.put("location", new BsonString(credentials.get("GCP_LOCATION")));
+        masterKeyProperties.put("keyRing", new BsonString(credentials.get("GCP_KEY_RING")));
+        masterKeyProperties.put("keyName", new BsonString(credentials.get("GCP_KEY_NAME")));        
         // end-datakeyopts
 
         // start-create-index
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
         String keyVaultDb = "encryption";
         String keyVaultColl = "__keyVault";
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
@@ -100,7 +101,9 @@ public class makeDataKey {
         MongoClient regularClient = MongoClients.create(connectionString);
 
         ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
-        BsonBinary dataKeyId = clientEncryption.createDataKey(kmsProvider, new DataKeyOptions().masterKey(masterKeyProperties));
+        List keyAltNames = new ArrayList<String>();
+        keyAltNames.add("demo-data-key");
+        BsonBinary dataKeyId = clientEncryption.createDataKey(kmsProvider, new DataKeyOptions().masterKey(masterKeyProperties).keyAltNames(keyAltNames));
         String base64DataKeyId = Base64.getEncoder().encodeToString(dataKeyId.getData());
         System.out.println("DataKeyId [base64]: " + base64DataKeyId);
         clientEncryption.close();

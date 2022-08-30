@@ -6,25 +6,31 @@ import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
 import pprint
+from your_values import get_credentials
+
+credentials = get_credentials()
 
 # start-key-vault
 key_vault_namespace = "encryption.__keyVault"
 # end-key-vault
 
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 # start-kmsproviders
 provider = "gcp"
 kms_providers = {
-    "gcp": {"email": "<your GCP email>", "privateKey": "<your GCP private key>"}
+    "gcp": {
+        "email": credentials["GCP_EMAIL"],
+        "privateKey": credentials["GCP_PRIVATE_KEY"],
+    }
 }
 # end-kmsproviders
 
 # start-schema
-dek_id = b"<paste-base-64-encoded-data-encryption-key-id>"
+# Make All fields random to use json pointer to reference key-id
 json_schema = {
     "bsonType": "object",
-    "encryptMetadata": {"keyId": [Binary(base64.b64decode(dek_id), UUID_SUBTYPE)]},
+    "encryptMetadata": {"keyId": "/key-id"},
     "properties": {
         "insurance": {
             "bsonType": "object",
@@ -32,7 +38,7 @@ json_schema = {
                 "policyNumber": {
                     "encrypt": {
                         "bsonType": "int",
-                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                        "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
                     }
                 }
             },
@@ -52,19 +58,18 @@ json_schema = {
         "ssn": {
             "encrypt": {
                 "bsonType": "int",
-                "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
             }
         },
     },
 }
 
-patient_schema = {"medicalRecords.patients": json_schema}
 
 patient_schema = {"medicalRecords.patients": json_schema}
 # end-schema
 
 # start-extra-options
-extra_options = {"mongocryptd_spawn_path": "/usr/local/bin/mongocryptd"}
+extra_options = {"mongocryptd_spawn_path": credentials["MONGOCRYPTD_PATH"]}
 # end-extra-options
 
 # start-client
@@ -85,6 +90,7 @@ def insert_patient(
         "bloodType": blood_type,
         "medicalRecords": medical_records,
         "insurance": insurance,
+        "key-id": "demo-data-key",
     }
     collection.insert_one(doc)
 
@@ -105,6 +111,7 @@ regularClient = MongoClient(connection_string)
 print("Finding a document with regular (non-encrypted) client.")
 result = regularClient.medicalRecords.patients.find_one({"name": "Jon Doe"})
 pprint.pprint(result)
+
 print("Finding a document with encrypted client, searching on an encrypted field")
-pprint.pprint(secureClient.medicalRecords.patients.find_one({"ssn": 241014209}))
+pprint.pprint(secureClient.medicalRecords.patients.find_one({"name": "Jon Doe"}))
 # end-find

@@ -2,26 +2,29 @@ const mongodb = require("mongodb");
 const { ClientEncryption } = require("mongodb-client-encryption");
 const { MongoClient, Binary } = mongodb;
 
+const { getCredentials } = require("./your_values");
+credentials = getCredentials();
+
 // start-kmsproviders
 const provider = "aws";
 const kmsProviders = {
   aws: {
-    accessKeyId: "<Your AWS Access Key ID>",
-    secretAccessKey: "<Your AWS Secret Access Key>",
+    accessKeyId: credentials["AWS_ACCESS_KEY_ID"],
+    secretAccessKey: credentials["AWS_SECRET_ACCESS_KEY"],
   },
 };
 // end-kmsproviders
 
 // start-datakeyopts
 const masterKey = {
-  key: "<Your AWS Key ARN>",
-  region: "<Your AWS Key Region>",
+  key: credentials["AWS_KEY_ARN"],
+  region: credentials["AWS_KEY_REGION"],
 };
 // end-datakeyopts
 
 async function main() {
   // start-create-index
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const keyVaultDatabase = "encryption";
   const keyVaultCollection = "__keyVault";
   const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
@@ -43,18 +46,21 @@ async function main() {
     }
   );
   // end-create-index
+
   // start-create-dek
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
   await client.connect();
+
   const encryption = new ClientEncryption(client, {
     keyVaultNamespace,
     kmsProviders,
   });
   const key = await encryption.createDataKey(provider, {
     masterKey: masterKey,
+    keyAltNames: ["demo-data-key"],
   });
   console.log("DataKeyId [base64]: ", key.toString("base64"));
   await keyVaultClient.close();

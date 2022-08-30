@@ -53,8 +53,7 @@ import org.bson.Document;
 public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
-
-
+        Map<String, String> credentials = YourValues.getCredentials();
         String encryptedDbName = "medicalRecords";
         String encryptedCollName = "patients";
         String encryptedNameSpace = encryptedDbName + "." + encryptedCollName;
@@ -65,15 +64,15 @@ public class InsertEncryptedDocument {
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
         // end-key-vault
 
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
 
         // start-kmsproviders
-        String kmsProvider = "azure";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
+        String kmsProvider = "azure";
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("tenantId", "<Azure account organization>");
-        providerDetails.put("clientId", "<Azure client ID>");
-        providerDetails.put("clientSecret", "<Azure client secret>");
+        providerDetails.put("tenantId", credentials.get("AZURE_TENANT_ID"));
+        providerDetails.put("clientId", credentials.get("AZURE_CLIENT_ID"));
+        providerDetails.put("clientSecret", credentials.get("AZURE_CLIENT_SECRET"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
@@ -110,7 +109,7 @@ public class InsertEncryptedDocument {
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
         // end-extra-options
 
         // start-client

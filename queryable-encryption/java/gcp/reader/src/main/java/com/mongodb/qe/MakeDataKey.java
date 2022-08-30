@@ -53,28 +53,29 @@ import com.mongodb.client.vault.ClientEncryptions;
 public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
+        Map<String, String> credentials = YourValues.getCredentials();
 
         // start-kmsproviders
         String kmsProvider = "gcp";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("email", "<Your GCP Email Address>");
-        providerDetails.put("privateKey", "<Your GCP Private Key>");
+        providerDetails.put("email", credentials.get("GCP_EMAIL"));
+        providerDetails.put("privateKey", credentials.get("GCP_PRIVATE_KEY"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
         // start-datakeyopts
         BsonDocument masterKeyProperties = new BsonDocument();
         masterKeyProperties.put("provider", new BsonString(kmsProvider));
-        masterKeyProperties.put("projectId", new BsonString("<Your GCP Project ID>"));
-        masterKeyProperties.put("location", new BsonString("<Your GCP Key Location>"));
-        masterKeyProperties.put("keyRing", new BsonString("<Your GCP Key Ring>"));
-        masterKeyProperties.put("keyName", new BsonString("<Your GCP Key Name>"));
+        masterKeyProperties.put("projectId", new BsonString(credentials.get("GCP_PROJECT_ID")));
+        masterKeyProperties.put("location", new BsonString(credentials.get("GCP_LOCATION")));
+        masterKeyProperties.put("keyRing", new BsonString(credentials.get("GCP_KEY_RING")));
+        masterKeyProperties.put("keyName", new BsonString(credentials.get("GCP_KEY_NAME")));        
         // end-datakeyopts
 
 
         // start-create-index
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
         String keyVaultDb = "encryption";
         String keyVaultColl = "__keyVault";
         MongoClient keyVaultClient = MongoClients.create(connectionString);
@@ -146,7 +147,7 @@ public class MakeDataKey {
         encryptedFieldsMap.put(encryptedNameSpace, encFields);
 
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
 
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))

@@ -54,8 +54,7 @@ import java.io.FileInputStream;
 public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
-
-
+        Map<String, String> credentials = YourValues.getCredentials();
         String encryptedDbName = "medicalRecords";
         String encryptedCollName = "patients";
         String encryptedNameSpace = encryptedDbName + "." + encryptedCollName;
@@ -66,7 +65,7 @@ public class InsertEncryptedDocument {
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
         // end-key-vault
 
-        String connectionString = "<Your MongoDB URI>";
+        String connectionString = credentials.get("MONGODB_URI");
 
         // start-kmsproviders
         String kmsProvider = "local";
@@ -118,7 +117,7 @@ public class InsertEncryptedDocument {
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
         // end-extra-options
 
         // start-client

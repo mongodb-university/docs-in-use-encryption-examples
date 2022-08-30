@@ -5,6 +5,7 @@ using System.Threading;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -12,16 +13,24 @@ namespace QueryableEncryption
     {
         public static void MakeKey()
         {
+            var credentials = new YourCredentials().GetCredentials();
 
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
             const string provider = "gcp";
+            var gcpPrivateKey = credentials["GCP_PRIVATE_KEY"];
+            var gcpEmail = credentials["GCP_EMAIL"];
             var gcpKmsOptions = new Dictionary<string, object>
             {
-               { "privateKey", "<Your GCP Private Key>" },
-               { "email", "<Your GCP Email>" },
+               { "privateKey", gcpPrivateKey },
+               { "email", gcpEmail },
             };
             kmsProviders.Add(provider, gcpKmsOptions);
+
+            var gcpDataKeyProjectId = credentials["GCP_PROJECT_ID"];
+            var gcpDataKeyLocation = credentials["GCP_LOCATION"];
+            var gcpDataKeyKeyRing = credentials["GCP_KEY_RING"];
+            var gcpDataKeyKeyName = credentials["GCP_KEY_NAME"];
             // end-kmsproviders
 
             // start-datakeyopts
@@ -31,17 +40,17 @@ namespace QueryableEncryption
                    alternateKeyNames: altNames,
                    masterKey: new BsonDocument
                    {
-                       { "projectId", "<Your GCP Project ID>" },
-                       { "location", "<Your GCP Key Location>" } ,
-                       { "keyRing", "<Your GCP Key Ring>" },
-                       { "keyName", "<Your GCP Key Name>" },
+                       { "projectId", gcpDataKeyProjectId },
+                       { "location", gcpDataKeyLocation } ,
+                       { "keyRing", gcpDataKeyKeyRing },
+                       { "keyName", gcpDataKeyKeyName },
                    });
                 return dataKeyOptions;
             }
             // end-datakeyopts
 
             // start-create-index
-            var connectionString = "<Your MongoDB URI>";
+            var connectionString = credentials["MONGODB_URI"];
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             var keyVaultClient = new MongoClient(connectionString);
             var indexOptions = new CreateIndexOptions<BsonDocument>
@@ -139,7 +148,7 @@ namespace QueryableEncryption
 
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
 
             var autoEncryptionOptions = new AutoEncryptionOptions(

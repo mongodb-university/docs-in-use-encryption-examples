@@ -7,26 +7,29 @@ const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
 const secretDB = "medicalRecords";
 const secretCollection = "patients";
 
+const { getCredentials } = require("./your_values");
+credentials = getCredentials();
+
 // start-kmsproviders
 const provider = "aws";
 const kmsProviders = {
   aws: {
-    accessKeyId: "<Your AWS Access Key ID>",
-    secretAccessKey: "<Your AWS Secret Access Key>",
+    accessKeyId: credentials["AWS_ACCESS_KEY_ID"],
+    secretAccessKey: credentials["AWS_SECRET_ACCESS_KEY"],
   },
 };
 // end-kmsproviders
 
 // start-datakeyopts
 const masterKey = {
-  key: "<Your AWS Key ARN>",
-  region: "<Your AWS Key Region>",
+  key: credentials["AWS_KEY_ARN"],
+  region: credentials["AWS_KEY_REGION"],
 };
 // end-datakeyopts
 
 async function run() {
   // start-create-index
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const keyVaultClient = new MongoClient(uri);
   await keyVaultClient.connect();
   const keyVaultDB = keyVaultClient.db(keyVaultDatabase);
@@ -95,7 +98,7 @@ async function run() {
     },
   };
   const extraOptions = {
-    cryptSharedLibPath: "<path to FLE Shared Library>",
+    cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
   };
   const encClient = new MongoClient(uri, {
     autoEncryption: {

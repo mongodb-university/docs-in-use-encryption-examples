@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,6 +14,8 @@ import (
 )
 
 func Insert() error {
+
+	credentials := GetCredentials()
 
 	// start-key-vault
 	keyVaultColl := "__keyVault"
@@ -33,7 +34,7 @@ func Insert() error {
 	// end-kmsproviders
 
 	// start-retrieve-deks
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 	regularClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		panic(fmt.Errorf("Client connect error %v", err))
@@ -54,7 +55,7 @@ func Insert() error {
 
 	// start-extra-options
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath": "<path to crypt_shared library>",
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 	// end-extra-options
 

@@ -5,6 +5,7 @@ using System.Threading;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Driver.Encryption;
+using Credentials;
 
 namespace QueryableEncryption
 {
@@ -12,15 +13,19 @@ namespace QueryableEncryption
     {
         public static void MakeKey()
         {
+            var credentials = new YourCredentials().GetCredentials();
 
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
             const string provider = "azure";
+            var azureTenantId = credentials["AZURE_TENANT_ID"];
+            var azureClientId = credentials["AZURE_CLIENT_ID"];
+            var azureClientSecret = credentials["AZURE_CLIENT_SECRET"];
             var azureKmsOptions = new Dictionary<string, object>
             {
-               { "tenantId", "<Your Azure Tenant ID>" },
-               { "clientId", "<Your Azure Client ID>" },
-               { "clientSecret", "<Your Azure Client Secret>" },
+               { "tenantId", azureTenantId },
+               { "clientId", azureClientId },
+               { "clientSecret", azureClientSecret },
             };
             kmsProviders.Add(provider, azureKmsOptions);
             // end-kmsproviders
@@ -28,20 +33,21 @@ namespace QueryableEncryption
             // start-datakeyopts
             DataKeyOptions GetDataKeyOptions(List<string> altNames)
             {
-                kmsProviders.Add(provider, azureKmsOptions);
+                var azureKeyName = credentials["AZURE_KEY_NAME"];
+                var azureKeyVaultEndpoint = credentials["AZURE_KEY_VAULT_ENDPOINT"]; // typically <azureKeyName>.vault.azure.net
                 var dataKeyOptions = new DataKeyOptions(
                    alternateKeyNames: altNames,
                    masterKey: new BsonDocument
                    {
-                       { "keyName", "<Your Azure Key Name>" },
-                       { "keyVaultEndpoint", "<Your Azure Key Vault Endpoint>" },
+                       { "keyName", azureKeyName },
+                       { "keyVaultEndpoint", azureKeyVaultEndpoint },
                    });
                 return dataKeyOptions;
             }
             // end-datakeyopts
 
             // start-create-index
-            var connectionString = "<Your MongoDB URI>";
+            var connectionString = credentials["MONGODB_URI"];
             var keyVaultNamespace = CollectionNamespace.FromFullName("encryption.__keyVault");
             var keyVaultClient = new MongoClient(connectionString);
             var indexOptions = new CreateIndexOptions<BsonDocument>
@@ -139,7 +145,7 @@ namespace QueryableEncryption
 
             var extraOptions = new Dictionary<string, object>()
             {
-               { "cryptSharedLibPath", "<path to crypt_shared library>" },
+                {"cryptSharedLibPath", credentials["SHARED_LIB_PATH"]},
             };
 
             var autoEncryptionOptions = new AutoEncryptionOptions(

@@ -7,6 +7,9 @@ const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
 const secretDB = "medicalRecords";
 const secretCollection = "patients";
 
+const { getCredentials } = require("./your_values");
+credentials = getCredentials();
+
 const fs = require("fs");
 const crypto = require("crypto");
 try {
@@ -32,7 +35,7 @@ const kmsProviders = {
 
 async function run() {
   // start-create-index
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const keyVaultClient = new MongoClient(uri);
   await keyVaultClient.connect();
   const keyVaultDB = keyVaultClient.db(keyVaultDatabase);
@@ -97,7 +100,7 @@ async function run() {
     },
   };
   const extraOptions = {
-    cryptSharedLibPath: "<path to FLE Shared Library>",
+    cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
   };
   const encClient = new MongoClient(uri, {
     autoEncryption: {

@@ -5,6 +5,9 @@ import base64
 import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
+from your_values import get_credentials
+
+credentials = get_credentials()
 
 import os
 
@@ -28,7 +31,7 @@ kms_providers = {
 # end-datakeyopts
 
 # start-create-index
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 key_vault_coll = "__keyVault"
 key_vault_db = "encryption"
@@ -47,6 +50,7 @@ key_vault_client[key_vault_db][key_vault_coll].create_index(
 )
 # end-create-index
 
+
 # start-create-dek
 key_vault_database = "encryption"
 key_vault_collection = "__keyVault"
@@ -59,7 +63,9 @@ client_encryption = ClientEncryption(
     client,
     CodecOptions(uuid_representation=STANDARD),
 )
-data_key_id = client_encryption.create_data_key("local")
+data_key_id = client_encryption.create_data_key(
+    "local", key_alt_names=["demo-data-key"]
+)
 
 base_64_data_key_id = base64.b64encode(data_key_id)
 print("DataKeyId [base64]: ", base_64_data_key_id)

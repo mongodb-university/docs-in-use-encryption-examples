@@ -5,6 +5,9 @@ import base64
 import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
+from your_values import get_credentials
+
+credentials = get_credentials()
 
 import os
 
@@ -31,7 +34,7 @@ kms_providers = {
 
 
 # start-create-index
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 key_vault_coll = "__keyVault"
 key_vault_db = "encryption"
@@ -59,6 +62,8 @@ client_encryption = ClientEncryption(
 
 data_key_id_1 = client_encryption.create_data_key(provider, key_alt_names=["dataKey1"])
 data_key_id_2 = client_encryption.create_data_key(provider, key_alt_names=["dataKey2"])
+data_key_id_3 = client_encryption.create_data_key(provider, key_alt_names=["dataKey3"])
+data_key_id_4 = client_encryption.create_data_key(provider, key_alt_names=["dataKey4"])
 # end-create-dek
 
 
@@ -79,6 +84,17 @@ encrypted_fields_map = {
                 "path": "medications",
                 "bsonType": "array",
             },
+            {
+                "keyId": data_key_id_3,
+                "path": "patientRecord.ssn",
+                "bsonType": "string",
+                "queries": {"queryType": "equality"},
+            },
+            {
+                "keyId": data_key_id_4,
+                "path": "patientRecord.billing",
+                "bsonType": "object",
+            },
         ],
     },
 }
@@ -91,7 +107,7 @@ auto_encryption = AutoEncryptionOpts(
     key_vault_namespace,
     encrypted_fields_map=encrypted_fields_map,
     schema_map=None,
-    crypt_shared_lib_path="<path to FLE Shared Library>",
+    crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 
 secure_client = MongoClient(connection_string, auto_encryption_opts=auto_encryption)

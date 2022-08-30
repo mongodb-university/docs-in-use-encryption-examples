@@ -13,26 +13,28 @@ import (
 
 func MakeKey() error {
 
+	credentials := GetCredentials()
+
 	// start-kmsproviders
 	provider := "azure"
 	kmsProviders := map[string]map[string]interface{}{
 		provider: {
-			"tenantId":     "<Your Azure Tenant ID>",
-			"clientId":     "<Your Azure Client ID>",
-			"clientSecret": "<Your Azure Client Secret>",
+			"tenantId":     credentials["AZURE_TENANT_ID"],
+			"clientId":     credentials["AZURE_CLIENT_ID"],
+			"clientSecret": credentials["AZURE_CLIENT_SECRET"],
 		},
 	}
 	// end-kmsproviders
 
 	// start-datakeyopts
 	masterKey := map[string]interface{}{
-		"keyVaultEndpoint": "<Your Azure Key Vault Endpoint>",
-		"keyName":          "<Your Azure Key Name>",
+		"keyVaultEndpoint": credentials["AZURE_KEY_VAULT_ENDPOINT"],
+		"keyName":          credentials["AZURE_KEY_NAME"],
 	}
 	// end-datakeyopts
 
 	// start-create-index
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 	keyVaultClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return fmt.Errorf("Connect error for regular client: %v", err)
@@ -71,7 +73,8 @@ func MakeKey() error {
 	// end-create-index
 
 	// start-create-dek
-	clientEncryptionOpts := options.ClientEncryption().SetKeyVaultNamespace(keyVaultNamespace).SetKmsProviders(kmsProviders)
+	clientEncryptionOpts := options.ClientEncryption().SetKeyVaultNamespace(keyVaultNamespace).
+		SetKmsProviders(kmsProviders)
 	clientEnc, err := mongo.NewClientEncryption(keyVaultClient, clientEncryptionOpts)
 	if err != nil {
 		return fmt.Errorf("NewClientEncryption error %v", err)
@@ -80,7 +83,8 @@ func MakeKey() error {
 		_ = clientEnc.Close(context.TODO())
 	}()
 	dataKeyOpts := options.DataKey().
-		SetMasterKey(masterKey)
+		SetMasterKey(masterKey).
+		SetKeyAltNames([]string{"demo-data-key"})
 
 	dataKeyID, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts)
 	if err != nil {

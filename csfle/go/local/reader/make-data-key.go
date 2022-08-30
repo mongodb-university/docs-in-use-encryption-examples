@@ -29,6 +29,8 @@ func localMasterKey() []byte {
 
 func MakeKey() error {
 
+	credentials := GetCredentials()
+
 	localMasterKey()
 
 	// start-kmsproviders
@@ -44,7 +46,7 @@ func MakeKey() error {
 	// end-datakeyopts
 
 	// start-create-index
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 	keyVaultClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return fmt.Errorf("Connect error for regular client: %v", err)
@@ -83,7 +85,8 @@ func MakeKey() error {
 	// end-create-index
 
 	// start-create-dek
-	clientEncryptionOpts := options.ClientEncryption().SetKeyVaultNamespace(keyVaultNamespace).SetKmsProviders(kmsProviders)
+	clientEncryptionOpts := options.ClientEncryption().SetKeyVaultNamespace(keyVaultNamespace).
+		SetKmsProviders(kmsProviders)
 	clientEnc, err := mongo.NewClientEncryption(keyVaultClient, clientEncryptionOpts)
 	if err != nil {
 		return fmt.Errorf("NewClientEncryption error %v", err)
@@ -91,7 +94,8 @@ func MakeKey() error {
 	defer func() {
 		_ = clientEnc.Close(context.TODO())
 	}()
-	dataKeyOpts := options.DataKey()
+	dataKeyOpts := options.DataKey().
+		SetKeyAltNames([]string{"demo-data-key"})
 
 	dataKeyID, err := clientEnc.CreateDataKey(context.TODO(), provider, dataKeyOpts)
 	if err != nil {

@@ -28,6 +28,8 @@ func localMasterKey() []byte {
 
 func MakeKey() error {
 
+	credentials := GetCredentials()
+
 	localMasterKey()
 
 	// start-kmsproviders
@@ -43,7 +45,7 @@ func MakeKey() error {
 	// end-datakeyopts
 
 	// start-create-index
-	uri := "<Your MongoDB URI>"
+	uri := credentials["MONGODB_URI"]
 	keyVaultClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return fmt.Errorf("Connect error for regular client: %v", err)
@@ -153,7 +155,7 @@ func MakeKey() error {
 		},
 	}
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath": "<Your Crypt Shared lib Path>",
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 
 	autoEncryptionOpts := options.AutoEncryption().

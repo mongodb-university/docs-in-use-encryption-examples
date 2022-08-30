@@ -44,9 +44,10 @@ import org.bson.Document;
  * - Attempts to find the upserted document with the normal client using an encrypted field
  * - Finds the upserted document with the normal client using a non-encrypted field
  */
-public class insertEncryptedDocument {
+public class InsertEncryptedDocument {
 
     public static void main(String[] args) throws Exception {
+        Map<String, String> credentials = YourValues.getCredentials();
         String recordsDb = "medicalRecords";
         String recordsColl = "patients";
         
@@ -54,46 +55,43 @@ public class insertEncryptedDocument {
         String keyVaultNamespace = "encryption.__keyVault";
         // end-key-vault
 
-        String connectionString = "mongodb://localhost:27017";
+        String connectionString = credentials.get("MONGODB_URI");
 
         // start-kmsproviders
         String kmsProvider = "gcp";
         Map<String, Map<String, Object>> kmsProviders = new HashMap<String, Map<String, Object>>();
         Map<String, Object> providerDetails = new HashMap<>();
-        providerDetails.put("email", "<Your GCP Email Address>");
-        providerDetails.put("privateKey", "<Your GCP Private Key>");
+        providerDetails.put("email", credentials.get("GCP_EMAIL"));
+        providerDetails.put("privateKey", credentials.get("GCP_PRIVATE_KEY"));
         kmsProviders.put(kmsProvider, providerDetails);
         // end-kmsproviders
 
         // start-schema
-        String dekId = "<paste-base-64-encoded-data-encryption-key-id>>";
         Document jsonSchema = new Document().append("bsonType", "object").append("encryptMetadata",
-                new Document().append("keyId", new ArrayList<>((Arrays.asList(new Document().append("$binary", new Document()
-                        .append("base64", dekId)
-                        .append("subType", "04")))))))
-                .append("properties", new Document()
-                        .append("ssn", new Document().append("encrypt", new Document()
+        new Document().append("keyId", "/key-id"))
+        .append("properties", new Document()
+                .append("ssn", new Document().append("encrypt", new Document()
+                    .append("bsonType", "int")
+                    .append("algorithm","AEAD_AES_256_CBC_HMAC_SHA_512-Random")))
+                .append("bloodType", new Document().append("encrypt", new Document()
+                    .append("bsonType", "string")
+                    .append("algorithm","AEAD_AES_256_CBC_HMAC_SHA_512-Random")))
+                .append("medicalRecords", new Document().append("encrypt", new Document()
+                    .append("bsonType", "array")
+                    .append("algorithm","AEAD_AES_256_CBC_HMAC_SHA_512-Random")))
+                .append("insurance", new Document()
+                        .append("bsonType", "object")
+                        .append("properties",
+                                new Document().append("policyNumber", new Document().append("encrypt", new Document()
                                 .append("bsonType", "int")
-                                .append("algorithm", "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic")))
-                        .append("bloodType", new Document().append("encrypt", new Document()
-                                .append("bsonType", "string")
-                                .append("algorithm", "AEAD_AES_256_CBC_HMAC_SHA_512-Random")))
-                        .append("medicalRecords", new Document().append("encrypt", new Document()
-                                .append("bsonType", "array")
-                                .append("algorithm", "AEAD_AES_256_CBC_HMAC_SHA_512-Random")))
-                        .append("insurance", new Document()
-                                .append("bsonType", "object")
-                                .append("properties",
-                                        new Document().append("policyNumber", new Document().append("encrypt", new Document()
-                                                .append("bsonType", "int")
-                                                .append("algorithm", "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"))))));
+                                .append("algorithm","AEAD_AES_256_CBC_HMAC_SHA_512-Random"))))));
         HashMap<String, BsonDocument> schemaMap = new HashMap<String, BsonDocument>();
         schemaMap.put("medicalRecords.patients", BsonDocument.parse(jsonSchema.toJson()));
         // end-schema
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("mongocryptdSpawnPath", "/usr/local/bin/mongocryptd");
+        extraOptions.put("mongocryptdSpawnPath", credentials.get("MONGOCRYPTD_PATH"));
         // end-extra-options
 
         MongoClientSettings clientSettingsRegular = MongoClientSettings.builder()
@@ -129,19 +127,20 @@ public class insertEncryptedDocument {
             .append("ssn", 241014209)
             .append("bloodType", "AB+")
             .append("medicalRecords", medicalRecords)
-            .append("insurance", insurance);
+            .append("insurance", insurance)
+            .append("key-id", "demo-data-key");
         mongoClientSecure.getDatabase(recordsDb).getCollection(recordsColl).insertOne(patient);
         // end-insert
         // start-find
         System.out.println("Finding a document with regular (non-encrypted) client.");
         Document docRegular = mongoClientRegular.getDatabase(recordsDb).getCollection(recordsColl).find(eq("name", "Jon Doe")).first();
         System.out.println(docRegular.toJson());
+        
         System.out.println("Finding a document with encrypted client, searching on an encrypted field");
-        Document docSecure = mongoClientSecure.getDatabase(recordsDb).getCollection(recordsColl).find(eq("ssn", 241014209)).first();
+        Document docSecure = mongoClientSecure.getDatabase(recordsDb).getCollection(recordsColl).find(eq("name", "Jon Doe")).first();
         System.out.println(docSecure.toJson());
         // end-find 
         mongoClientSecure.close();
         mongoClientRegular.close();    
-
     }
 }

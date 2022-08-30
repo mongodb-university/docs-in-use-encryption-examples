@@ -5,6 +5,9 @@ import base64
 import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
+from your_values import get_credentials
+
+credentials = get_credentials()
 
 import os
 
@@ -12,24 +15,23 @@ import os
 provider = "azure"
 kms_providers = {
     provider: {
-        "tenantId": "<Azure account organization>",
-        "clientId": "<Azure client ID>",
-        "clientSecret": "<Azure client secret>",
+        "tenantId": credentials["AZURE_TENANT_ID"],
+        "clientId": credentials["AZURE_CLIENT_ID"],
+        "clientSecret": credentials["AZURE_CLIENT_SECRET"],
     }
 }
 # end-kmsproviders
 
 # start-datakeyopts
 master_key = {
-    "keyName": "<Azure key name>",
-    "keyVersion": "<Azure key version>",
-    "keyVaultEndpoint": "<Azure key vault endpoint/key identifier>",
+    "keyName": credentials["AZURE_KEY_NAME"],
+    "keyVaultEndpoint": credentials["AZURE_KEY_VAULT_ENDPOINT"],
 }
 # end-datakeyopts
 
 
 # start-create-index
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 key_vault_coll = "__keyVault"
 key_vault_db = "encryption"
@@ -110,7 +112,7 @@ auto_encryption = AutoEncryptionOpts(
     key_vault_namespace,
     encrypted_fields_map=encrypted_fields_map,
     schema_map=None,
-    crypt_shared_lib_path="<path to FLE Shared Library>",
+    crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 
 secure_client = MongoClient(connection_string, auto_encryption_opts=auto_encryption)

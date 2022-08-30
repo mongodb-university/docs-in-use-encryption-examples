@@ -1,6 +1,9 @@
 const { MongoClient } = require("mongodb");
 const { ClientEncryption } = require("mongodb-client-encryption");
 
+const { getCredentials } = require("./your_values");
+credentials = getCredentials();
+
 // start-key-vault
 const eDB = "encryption";
 const eKV = "__keyVault";
@@ -23,7 +26,7 @@ const kmsProviders = {
 
 async function run() {
   // start-retrieve-deks
-  const uri = "<Your MongoDB URI>";
+  const uri = credentials.MONGODB_URI;
   const unencryptedClient = new MongoClient(uri);
   await unencryptedClient.connect();
   const keyVaultClient = unencryptedClient.db(eDB).collection(eKV);
@@ -33,7 +36,7 @@ async function run() {
 
   // start-extra-options
   const extraOptions = {
-    cryptSharedLibPath: "<path to crypt_shared library>",
+    cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
   };
   // end-extra-options
 

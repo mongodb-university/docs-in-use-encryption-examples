@@ -56,6 +56,7 @@ import java.security.SecureRandom;
 public class MakeDataKey {
 
     public static void main(String[] args) throws Exception {
+        Map<String, String> credentials = YourValues.getCredentials();
         byte[] localMasterKeyWrite = new byte[96];
         new SecureRandom().nextBytes(localMasterKeyWrite);
         try (FileOutputStream stream = new FileOutputStream("master-key.txt")) {
@@ -84,6 +85,7 @@ public class MakeDataKey {
 
 
         // start-create-index
+        String connectionString = credentials.get("MONGODB_URI");
         String keyVaultDb = "encryption";
         String keyVaultColl = "__keyVault";
         MongoClient keyVaultClient = MongoClients.create(connectionString);
@@ -119,6 +121,14 @@ public class MakeDataKey {
         keyAlts2.add("dataKey2");
         BsonBinary dataKeyId2 = clientEncryption.createDataKey(kmsProvider, new DataKeyOptions()
                 .keyAltNames(keyAlts2));
+        List<String> keyAlts3 = new ArrayList<String>();
+        keyAlts3.add("dataKey3");
+        BsonBinary dataKeyId3 = clientEncryption.createDataKey(kmsProvider, new DataKeyOptions()
+                .keyAltNames(keyAlts3));
+        List<String> keyAlts4 = new ArrayList<String>();
+        keyAlts4.add("dataKey4");
+        BsonBinary dataKeyId4 = clientEncryption.createDataKey(kmsProvider, new DataKeyOptions()
+                .keyAltNames(keyAlts4));
         // end-create-dek
         // start-create-enc-collection
         String encryptedNameSpace = encryptedDbName + "." + encryptedCollName;
@@ -131,12 +141,19 @@ public class MakeDataKey {
                         new BsonDocument().append("keyId", dataKeyId2)
                                 .append("path", new BsonString("medications"))
                                 .append("bsonType", new BsonString("array")),
+                        new BsonDocument().append("keyId", dataKeyId3)
+                                .append("path", new BsonString("patientRecord.ssn"))
+                                .append("bsonType", new BsonString("string"))
+                                .append("queries", new BsonDocument().append("queryType", new BsonString("equality"))),
+                        new BsonDocument().append("keyId", dataKeyId4)
+                                .append("path", new BsonString("patientRecord.billing"))
+                                .append("bsonType", new BsonString("object"))
                         )));
         Map<String, BsonDocument> encryptedFieldsMap = new HashMap<String, BsonDocument>();
         encryptedFieldsMap.put(encryptedNameSpace, encFields);
 
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("cryptSharedLibPath", "<path to crypt_shared>");
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
 
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))

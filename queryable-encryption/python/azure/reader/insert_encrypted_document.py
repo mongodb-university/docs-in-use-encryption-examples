@@ -6,6 +6,9 @@ import os
 from bson.codec_options import CodecOptions
 from bson.binary import STANDARD, UUID
 import pprint
+from your_values import get_credentials
+
+credentials = get_credentials()
 
 # start-key-vault
 key_vault_db = "encryption"
@@ -17,15 +20,15 @@ key_vault_namespace = "encryption.__keyVault"
 provider = "azure"
 kms_providers = {
     provider: {
-        "tenantId": "<Azure account organization>",
-        "clientId": "<Azure client ID>",
-        "clientSecret": "<Azure client secret>",
+        "tenantId": credentials["AZURE_TENANT_ID"],
+        "clientId": credentials["AZURE_CLIENT_ID"],
+        "clientSecret": credentials["AZURE_CLIENT_SECRET"],
     }
 }
 # end-kmsproviders
 
 # start-schema
-connection_string = "<your connection string here>"
+connection_string = credentials["MONGODB_URI"]
 
 unencryptedClient = MongoClient(connection_string)
 keyVaultClient = unencryptedClient[key_vault_db][key_vault_coll]
@@ -73,7 +76,7 @@ auto_encryption = AutoEncryptionOpts(
     key_vault_namespace,
     encrypted_fields_map=encrypted_fields_map,
     schema_map=None,
-    crypt_shared_lib_path="<path to FLE Shared Library>",
+    crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 # end-extra-options
 

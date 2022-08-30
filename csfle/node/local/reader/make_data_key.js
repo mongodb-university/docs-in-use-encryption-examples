@@ -2,6 +2,9 @@ const mongodb = require("mongodb");
 const { ClientEncryption } = require("mongodb-client-encryption");
 const { MongoClient, Binary } = mongodb;
 
+const { getCredentials } = require("./your_values");
+credentials = getCredentials();
+
 const fs = require("fs");
 const crypto = require("crypto");
 try {
@@ -26,7 +29,7 @@ const kmsProviders = {
 
 async function main() {
   // start-create-index
-  const uri = "<Your Connection String>";
+  const uri = credentials.MONGODB_URI;
   const keyVaultDatabase = "encryption";
   const keyVaultCollection = "__keyVault";
   const keyVaultNamespace = `${keyVaultDatabase}.${keyVaultCollection}`;
@@ -48,17 +51,21 @@ async function main() {
     }
   );
   // end-create-index
+
   // start-create-dek
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
   await client.connect();
+
   const encryption = new ClientEncryption(client, {
     keyVaultNamespace,
     kmsProviders,
   });
-  const key = await encryption.createDataKey(provider);
+  const key = await encryption.createDataKey(provider, {
+    keyAltNames: ["demo-data-key"],
+  });
   console.log("DataKeyId [base64]: ", key.toString("base64"));
   await keyVaultClient.close();
   await client.close();
