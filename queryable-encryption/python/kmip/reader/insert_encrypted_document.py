@@ -1,0 +1,119 @@
+from pymongo import MongoClient
+from pymongo.encryption_options import AutoEncryptionOpts
+from pymongo.encryption import ClientEncryption
+import base64
+import os
+from bson.codec_options import CodecOptions
+from bson.binary import STANDARD, UUID
+import pprint
+from your_credentials import get_credentials
+
+credentials = get_credentials()
+
+# start-key-vault
+key_vault_db = "encryption"
+key_vault_coll = "__keyVault"
+key_vault_namespace = "encryption.__keyVault"
+# end-key-vault
+
+# start-kmsproviders
+provider = "kmip"
+kms_providers = {provider: {"endpoint": credentials["KMIP_KMS_ENDPOINT"]}}
+# end-kmsproviders
+
+# start-schema
+connection_string = credentials["MONGODB_URI"]
+
+unencryptedClient = MongoClient(connection_string)
+keyVaultClient = unencryptedClient[key_vault_db][key_vault_coll]
+data_key_id_1 = keyVaultClient.find_one({"keyAltNames": "dataKey1"})["_id"]
+data_key_id_2 = keyVaultClient.find_one({"keyAltNames": "dataKey2"})["_id"]
+data_key_id_3 = keyVaultClient.find_one({"keyAltNames": "dataKey3"})["_id"]
+data_key_id_4 = keyVaultClient.find_one({"keyAltNames": "dataKey4"})["_id"]
+
+encrypted_db_name = "medicalRecords"
+encrypted_coll_name = "patients"
+
+encrypted_fields_map = {
+    f"{encrypted_db_name}.{encrypted_coll_name}": {
+        "fields": [
+            {
+                "keyId": data_key_id_1,
+                "path": "patientId",
+                "bsonType": "int",
+                "queries": {"queryType": "equality"},
+            },
+            {
+                "keyId": data_key_id_2,
+                "path": "medications",
+                "bsonType": "array",
+            },
+            {
+                "keyId": data_key_id_3,
+                "path": "patientRecord.ssn",
+                "bsonType": "string",
+                "queries": {"queryType": "equality"},
+            },
+            {
+                "keyId": data_key_id_4,
+                "path": "patientRecord.billing",
+                "bsonType": "object",
+            },
+        ],
+    },
+}
+# end-schema
+
+# start-create-tls
+tls_options = {
+    "kmip": {
+        "tlsCAFile": credentials["KMIP_TLS_CA_FILE"],
+        "tlsCertificateKeyFile": credentials["KMIP_TLS_CERT_FILE"],
+    }
+}
+# end-create-tls
+
+# start-extra-options
+auto_encryption = AutoEncryptionOpts(
+    kms_providers,
+    key_vault_namespace,
+    encrypted_fields_map=encrypted_fields_map,
+    kms_tls_options=tls_options,
+    schema_map=None,
+)
+# end-extra-options
+
+# start-client
+secure_client = MongoClient(connection_string, auto_encryption_opts=auto_encryption)
+# end-client
+
+# start-insert
+encrypted_coll = secure_client[encrypted_db_name][encrypted_coll_name]
+encrypted_coll.insert_one(
+    {
+        "firstName": "Jon",
+        "lastName": "Doe",
+        "patientId": 12345678,
+        "address": "157 Electric Ave.",
+        "patientRecord": {
+            "ssn": "987-65-4320",
+            "billing": {
+                "type": "Visa",
+                "number": "4111111111111111",
+            },
+        },
+        "medications": ["Atorvastatin", "Levothyroxine"],
+    }
+)
+# end-insert
+
+# start-find
+print("Finding a document with regular (non-encrypted) client.")
+pprint.pprint(
+    unencryptedClient[encrypted_db_name][encrypted_coll_name].find_one(
+        {"firstName": "Jon"}
+    )
+)
+print("Finding a document with encrypted client, searching on an encrypted field")
+pprint.pprint(encrypted_coll.find_one({"patientRecord.ssn": "987-65-4320"}))
+# end-find
