@@ -32,7 +32,7 @@ namespace QueryableEncryption
             {
                 var dataKeyOptions = new DataKeyOptions(
                     alternateKeyNames: altNames,
-                    masterKey: new BsonDocument { } // an empty key object prompts your KMIP provider to generate a new Customer Master Key
+                    masterKey: new BsonDocument { } // an empty key object prompts your KMIP-compliant key provider to generate a new Customer Master Key
                 );
                 return dataKeyOptions;
             }

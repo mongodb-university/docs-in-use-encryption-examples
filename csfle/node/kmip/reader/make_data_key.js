@@ -15,7 +15,7 @@ const kmsProviders = {
 // end-kmsproviders
 
 // start-datakeyopts
-const masterKey = {}; // an empty key object prompts your KMIP provider to generate a new Customer Master Key
+const masterKey = {}; // an empty key object prompts your KMIP-compliant key provider to generate a new Customer Master Key
 // end-datakeyopts
 
 async function main() {

@@ -18,7 +18,7 @@ kms_providers = {provider: {"endpoint": credentials["KMIP_KMS_ENDPOINT"]}}
 # start-datakeyopts
 master_key = (
     {}
-)  # an empty key object prompts your KMIP provider to generate a new Customer Master Key
+)  # an empty key object prompts your KMIP-compliant key provider to generate a new Customer Master Key
 # end-datakeyopts
 
 # start-create-index
