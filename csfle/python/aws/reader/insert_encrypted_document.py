@@ -64,9 +64,9 @@ json_schema = {
     },
 }
 
-
 patient_schema = {"medicalRecords.patients": json_schema}
 # end-schema
+
 
 # start-extra-options
 extra_options = {"mongocryptd_spawn_path": credentials["MONGOCRYPTD_PATH"]}

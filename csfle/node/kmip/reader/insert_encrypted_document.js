@@ -62,6 +62,10 @@ const schema = {
   },
 };
 
+var patientSchema = {};
+patientSchema[namespace] = schema;
+// end-schema
+
 // start-create-tls
 const tlsOptions = {
   kmip: {
@@ -70,10 +74,6 @@ const tlsOptions = {
   },
 };
 // end-create-tls
-
-var patientSchema = {};
-patientSchema[namespace] = schema;
-// end-schema
 
 // start-extra-options
 const extraOptions = {
