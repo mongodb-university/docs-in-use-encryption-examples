@@ -26,7 +26,7 @@ func MakeKey() error {
 	// end-kmsproviders
 
 	// start-datakeyopts
-	masterKey := map[string]interface{}{} // an empty key object prompts your KMIP provider to generate a new Customer Master Key
+	masterKey := map[string]interface{}{} // an empty key object prompts your KMIP-compliant key provider to generate a new Customer Master Key
 	// end-datakeyopts
 
 	// start-create-index
