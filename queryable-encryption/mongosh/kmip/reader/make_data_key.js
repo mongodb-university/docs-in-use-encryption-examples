@@ -8,22 +8,16 @@ const { getCredentials } = require("./your_credentials.js");
 credentials = getCredentials();
 
 // start-kmsproviders
-const provider = "gcp";
+const provider = "kmip";
 const kmsProviders = {
-  gcp: {
-    email: credentials["GCP_EMAIL"],
-    privateKey: credentials["GCP_PRIVATE_KEY"],
+  kmip: {
+    endpoint: credentials["KMIP_KMS_ENDPOINT"],
   },
 };
 // end-kmsproviders
 
 // start-datakeyopts
-const masterKey = {
-  projectId: credentials["GCP_PROJECT_ID"],
-  location: credentials["GCP_LOCATION"],
-  keyRing: credentials["GCP_KEY_RING"],
-  keyName: credentials["GCP_KEY_NAME"],
-};
+const masterKey = {}; // an empty key object prompts your KMIP-compliant key provider to generate a new Customer Master Key
 // end-datakeyopts
 
 async function run() {
@@ -46,10 +40,20 @@ async function run() {
   );
   // end-create-index
 
+  // start-create-tls
+  const tlsOptions = {
+    kmip: {
+      tlsCAFile: credentials.KMIP_TLS_CA_FILE,
+      tlsCertificateKeyFile: credentials.KMIP_TLS_CERT_FILE,
+    },
+  };
+  // end-create-tls
+
   // start-create-dek
   const autoEncryptionOpts = {
     keyVaultNamespace: keyVaultNamespace,
     kmsProviders: kmsProviders,
+    tlsOptions: tlsOptions,
   };
 
   // start-create-dek

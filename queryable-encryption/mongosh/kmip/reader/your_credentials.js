@@ -10,14 +10,15 @@ const credentials = {
   // Mongo Paths + URI
   MONGODB_URI: "<your MongoDB URI here>",
 
-  // GCP Credentials
-  GCP_EMAIL: "<your GCP email>",
-  GCP_PRIVATE_KEY: "<your GCP private key>",
-  GCP_PROJECT_ID: "<your project id>",
-  GCP_LOCATION: "<your location>",
-  GCP_KEY_RING: "<your key ring>",
-  GCP_KEY_NAME: "<your key name>",
-  GCP_KEY_VERSION: "<your key version>",
+  // KMIP Credentials
+  KMIP_KMS_ENDPOINT:
+    "<endpoint for your KMIP KMS. Default is 'localhost:5698'>",
+  KMIP_TLS_CA_FILE:
+    "<full path to your KMIP certificate authority file. Default is '<path to this repo>/kmip_utils/certs/ca.pem'>",
+  KMIP_TLS_CERT_FILE:
+    "<full path to your client certificate file. Default is '<path to this repo>/kmip_utils/certs/client.pem'>",
+  KMIP_TLS_CERT_P12:
+    "<full path to your client certificate p12 file. Default is '<path to this repo>/kmip_utils/certs/pcks_client.p12'>",
 };
 
 /*

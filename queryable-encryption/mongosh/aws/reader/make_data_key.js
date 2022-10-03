@@ -106,7 +106,6 @@ async function run() {
     const autoEncryptionOptions = {
       keyVaultNamespace: keyVaultNamespace,
       kmsProviders: kmsProviders,
-      bypassQueryAnalysis: false,
       encryptedFieldsMap: encryptedFieldsMap,
     };
 

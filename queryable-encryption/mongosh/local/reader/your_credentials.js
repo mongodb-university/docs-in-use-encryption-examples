@@ -9,7 +9,6 @@ function getCredentials() {
 const credentials = {
   // Mongo Paths + URI
   MONGODB_URI: "<your MongoDB URI here>",
-  SHARED_LIB_PATH: "<path to CSFLE shared library>",
 };
 
 /*
