@@ -3,29 +3,28 @@ package main
 import (
 	"fmt"
 	"log"
-	"regexp"
+	"os"
 	"strings"
 )
 
 var credentials = map[string]string{
 	// Mongo Paths + URI
-	"MONGODB_URI":     "<your MongoDB URI here>",
-	"SHARED_LIB_PATH": "<path to CSFLE shared library>",
+	"MONGODB_URI":     os.Getenv("MONGODB_URI"),
+	"SHARED_LIB_PATH": os.Getenv("SHARED_LIB_PATH"),
 	// AWS Credentials
-	"AWS_ACCESS_KEY_ID":     "<your AWS access key ID here>",
-	"AWS_SECRET_ACCESS_KEY": "<your AWS secret access key here>",
-	"AWS_KEY_REGION":        "<your AWS key region>",
-	"AWS_KEY_ARN":           "<your AWS key ARN>",
+	"AWS_ACCESS_KEY_ID":     os.Getenv("AWS_ACCESS_KEY_ID"),
+	"AWS_SECRET_ACCESS_KEY": os.Getenv("AWS_SECRET_ACCESS_KEY"),
+	"AWS_KEY_REGION":        os.Getenv("AWS_KEY_REGION"),
+	"AWS_KEY_ARN":           os.Getenv("AWS_KEY_ARN"),
 }
 
 // check if credentials object contains placeholder values
 func check_for_placeholders() {
 	var error_buffer []string
-	placeholder_pattern, _ := regexp.Compile("^<.*>$")
 	for key, value := range credentials {
 		// check for placeholder text
-		if placeholder_pattern.MatchString(string(value)) {
-			error_message := fmt.Sprintf("You must fill out the %s field of your credentials object.\n", key)
+		if value == "" {
+			error_message := fmt.Sprintf("You must fill out the %s environment variable.", key)
 			error_buffer = append(error_buffer, error_message)
 		}
 	}
