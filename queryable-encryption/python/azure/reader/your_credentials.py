@@ -3,7 +3,7 @@ import re
 _credentials = {
     # Mongo Paths + URI
     "MONGODB_URI": "<your MongoDB URI here>",
-    "SHARED_LIB_PATH": "<path to CSFLE shared library>",
+    "SHARED_LIB_PATH": "<path to crypt_shared library>",
     # Azure Credentials
     "AZURE_TENANT_ID": "<your Azure tenant ID here>",
     "AZURE_CLIENT_ID": "<your Azure client ID here>",

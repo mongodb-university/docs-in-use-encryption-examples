@@ -7,11 +7,13 @@ const secretCollection = "patients";
 const { getCredentials } = require("./your_credentials.js");
 credentials = getCredentials();
 
+// start-local-cmk
 try {
   fs.writeFileSync("./master-key.txt", crypto.randomBytes(96));
 } catch (err) {
   console.error(err);
 }
+// end-local-cmk
 
 // start-kmsproviders
 const provider = "local";

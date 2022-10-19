@@ -9,7 +9,7 @@ function getCredentials() {
 const credentials = {
   // Mongo Paths + URI
   MONGODB_URI: "<your MongoDB URI here>",
-  SHARED_LIB_PATH: "<path to CSFLE shared library>",
+  SHARED_LIB_PATH: "<path to crypt_shared library>",
 
   // GCP Credentials
   GCP_EMAIL: "<your GCP email>",
