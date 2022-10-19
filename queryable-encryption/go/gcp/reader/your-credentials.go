@@ -10,7 +10,7 @@ import (
 var credentials = map[string]string{
 	// Mongo Paths + URI
 	"MONGODB_URI":     "<your MongoDB URI here>",
-	"SHARED_LIB_PATH": "<path to CSFLE shared library>",
+	"SHARED_LIB_PATH": "<path to crypt_shared library>",
 	// GCP Credentials
 	"GCP_EMAIL":       "<your GCP email>",
 	"GCP_PRIVATE_KEY": "<your GCP private key>",
