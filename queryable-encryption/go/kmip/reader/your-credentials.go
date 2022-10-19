@@ -10,7 +10,7 @@ import (
 var credentials = map[string]string{
 	// Mongo Paths + URI
 	"MONGODB_URI":     "<your MongoDB URI here>",
-	"SHARED_LIB_PATH": "<path to CSFLE shared library>",
+	"SHARED_LIB_PATH": "<path to crypt_shared library>",
 	// KMIP Credentials
 	"KMIP_KMS_ENDPOINT":  "<endpoint for your KMIP KMS. Default is 'localhost:5698'>",
 	"KMIP_TLS_CA_FILE":   "<full path to your KMIP certificate authority file. Default is '<path to this repo>/kmip_utils/certs/ca.pem'>",

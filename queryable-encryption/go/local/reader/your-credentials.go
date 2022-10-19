@@ -10,7 +10,7 @@ import (
 var credentials = map[string]string{
 	// Mongo Paths + URI
 	"MONGODB_URI":     "<your MongoDB URI here>",
-	"SHARED_LIB_PATH": "<path to CSFLE shared library>",
+	"SHARED_LIB_PATH": "<path to crypt_shared library>",
 }
 
 // check if credentials object contains placeholder values
