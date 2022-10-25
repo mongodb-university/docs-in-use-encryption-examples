@@ -17,6 +17,7 @@ namespace Key
 
             var credentials = new YourCredentials().GetCredentials();
 
+            // start-local-cmk
             using (var randomNumberGenerator = System.Security.Cryptography.RandomNumberGenerator.Create())
             {
                 var bytes = new byte[96];
@@ -25,6 +26,7 @@ namespace Key
                 Console.WriteLine(localMasterKeyBase64Write);
                 File.WriteAllText("master-key.txt", localMasterKeyBase64Write);
             }
+            // end-local-cmk
 
             // start-kmsproviders
             var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();

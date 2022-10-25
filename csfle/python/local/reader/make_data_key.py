@@ -9,12 +9,14 @@ from your_credentials import get_credentials
 
 credentials = get_credentials()
 
+# start-local-cmk
 import os
 
 path = "master-key.txt"
 file_bytes = os.urandom(96)
 with open(path, "wb") as f:
     f.write(file_bytes)
+# end-local-cmk
 
 # start-kmsproviders
 path = "./master-key.txt"
