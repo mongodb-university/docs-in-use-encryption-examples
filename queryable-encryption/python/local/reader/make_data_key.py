@@ -109,7 +109,6 @@ auto_encryption = AutoEncryptionOpts(
     kms_providers,
     key_vault_namespace,
     encrypted_fields_map=encrypted_fields_map,
-    schema_map=None,
     crypt_shared_lib_path=credentials["SHARED_LIB_PATH"],
 )
 
