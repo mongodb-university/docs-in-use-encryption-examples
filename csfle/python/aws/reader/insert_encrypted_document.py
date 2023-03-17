@@ -79,6 +79,7 @@ fle_opts = AutoEncryptionOpts(
 secureClient = MongoClient(connection_string, auto_encryption_opts=fle_opts)
 # end-client
 
+
 # start-insert
 def insert_patient(
     collection, name, ssn, blood_type, medical_records, policy_number, provider
