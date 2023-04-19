@@ -52,7 +52,6 @@ async function run() {
     kmsProviders: kmsProviders,
   };
 
-  // start-create-dek
   const encClient = Mongo(uri, autoEncryptionOpts);
   const keyVault = encClient.getKeyVault();
 
