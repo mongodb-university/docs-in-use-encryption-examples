@@ -94,9 +94,9 @@ namespace Insert
             // start-extra-options
             var extraOptions = new Dictionary<string, object>()
             {
-                { "mongocryptdSpawnPath", credentials["MONGOCRYPTD_PATH"]},
+                { cryptSharedLibPath: credentials["SHARED_LIB_PATH"]},
             };
-            // end-extra-options
+    // end-extra-options
 
             var regularClientSettings = MongoClientSettings.FromConnectionString(connectionString);
             var regularClient = new MongoClient(regularClientSettings);

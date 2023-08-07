@@ -92,7 +92,7 @@ public class InsertEncryptedDocument {
 
         // start-extra-options
         Map<String, Object> extraOptions = new HashMap<String, Object>();
-        extraOptions.put("mongocryptdSpawnPath", credentials.get("MONGOCRYPTD_PATH"));
+        extraOptions.put("cryptSharedLibPath", credentials.get("SHARED_LIB_PATH"));
         // end-extra-options
 
         MongoClientSettings clientSettingsRegular = MongoClientSettings.builder()

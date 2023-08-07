@@ -11,7 +11,7 @@ namespace Credentials
             {
                 // Mongo Paths + URI
                 {"MONGODB_URI", "<your MongoDB URI>"},
-                {"MONGOCRYPTD_PATH", "<path to mongocryptd>"},
+                {"SHARED_LIB_PATH", "<Full path to your Automatic Encryption Shared Library>"},
                 
                 // KMIP Credentials
                 {"KMIP_KMS_ENDPOINT", "<endpoint for your KMIP KMS. Default is 'localhost:5698'>"},

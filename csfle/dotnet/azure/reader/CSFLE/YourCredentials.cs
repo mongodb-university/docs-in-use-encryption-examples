@@ -11,7 +11,7 @@ namespace Credentials
             {
                 // Mongo Paths + URI
                 {"MONGODB_URI", "<your MongoDB URI>"},
-                {"MONGOCRYPTD_PATH", "<path to mongocryptd>"},
+                {"SHARED_LIB_PATH", "<Full path to your Automatic Encryption Shared Library>"},
                 
                 // Azure Credentials
                 {"AZURE_TENANT_ID", "<your Azure tenant ID here>"},
