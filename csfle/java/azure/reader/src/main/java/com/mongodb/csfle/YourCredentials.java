@@ -28,7 +28,7 @@ public class YourCredentials {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
-        yourCredentials.put("SHARED_LIB_PATH", "<Full path to your Automatic Encryption Shared Library>");
+        yourCredentials.put("SHARED_LIB_PATH", "<Absolute path of your Automatic Encryption Shared Library>");
         // Azure Credentials
         yourCredentials.put("AZURE_TENANT_ID", "<your Azure tenant ID here>");
         yourCredentials.put("AZURE_CLIENT_ID", "<your Azure client ID here>");

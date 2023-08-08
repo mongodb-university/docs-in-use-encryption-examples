@@ -3,7 +3,7 @@ import re
 _credentials = {
     # Mongo Paths + URI
     "MONGODB_URI": "<your MongoDB URI here>",
-    "SHARED_LIB_PATH": "<Full path to your Automatic Encryption Shared Library>",
+    "SHARED_LIB_PATH": "<Absolute path of your Automatic Encryption Shared Library>",
     # GCP Credentials
     "GCP_EMAIL": "<your GCP email>",
     "GCP_PRIVATE_KEY": "<your GCP private key>",

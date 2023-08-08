@@ -28,7 +28,7 @@ public class YourCredentials {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
-        yourCredentials.put("SHARED_LIB_PATH", "<Full path to your Automatic Encryption Shared Library>");
+        yourCredentials.put("SHARED_LIB_PATH", "<Absolute path of your Automatic Encryption Shared Library>");
         // AWS Credentials
         yourCredentials.put("AWS_ACCESS_KEY_ID", "<your AWS access key ID here>");
         yourCredentials.put("AWS_SECRET_ACCESS_KEY", "<your AWS secret access key here>");

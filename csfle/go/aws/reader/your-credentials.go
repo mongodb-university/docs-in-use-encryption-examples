@@ -10,7 +10,7 @@ import (
 var credentials = map[string]string{
 	// Mongo Paths + URI
 	"MONGODB_URI":     "<your MongoDB URI here>",
-	"SHARED_LIB_PATH": "<Full path to your Automatic Encryption Shared Library>",
+	"SHARED_LIB_PATH": "<Absolute path of your Automatic Encryption Shared Library>",
 	// AWS Credentials
 	"AWS_ACCESS_KEY_ID":     "<your AWS access key ID here>",
 	"AWS_SECRET_ACCESS_KEY": "<your AWS secret access key here>",
