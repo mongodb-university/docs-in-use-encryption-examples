@@ -86,7 +86,7 @@ func Insert() error {
 
 	// start-extra-options
 	extraOptions := map[string]interface{}{
-		"mongocryptdSpawnPath": credentials["MONGOCRYPTD_PATH"],
+		"cryptSharedLibPath": credentials["SHARED_LIB_PATH"],
 	}
 	// end-extra-options
 

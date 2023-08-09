@@ -28,7 +28,7 @@ public class YourCredentials {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
-        yourCredentials.put("MONGOCRYPTD_PATH", "<path to mongocryptd>");
+        yourCredentials.put("SHARED_LIB_PATH", "<Absolute path of your Automatic Encryption Shared Library>");
 
     }
     private static void checkPlaceholders() throws Exception {

@@ -3,7 +3,7 @@ import re
 _credentials = {
     # Mongo Paths + URI
     "MONGODB_URI": "<your MongoDB URI here>",
-    "MONGOCRYPTD_PATH": "<your MongoCryptd path>",
+    "SHARED_LIB_PATH": "<Absolute path of your Automatic Encryption Shared Library>",
 }
 
 

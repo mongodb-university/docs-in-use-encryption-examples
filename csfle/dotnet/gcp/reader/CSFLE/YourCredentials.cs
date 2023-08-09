@@ -11,7 +11,7 @@ namespace Credentials
             {
                 // Mongo Paths + URI
                 {"MONGODB_URI", "<your MongoDB URI>"},
-                {"MONGOCRYPTD_PATH", "<path to mongocryptd>"},
+                {"SHARED_LIB_PATH", "<Absolute path of your Automatic Encryption Shared Library>"},
                 
                 // GCP Credentials
                 {"GCP_EMAIL", "<your GCP email>"},

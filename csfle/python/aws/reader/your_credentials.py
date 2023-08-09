@@ -3,7 +3,7 @@ import re
 _credentials = {
     # Mongo Paths + URI
     "MONGODB_URI": "<your MongoDB URI here>",
-    "MONGOCRYPTD_PATH": "<your MongoCryptd path>",
+    "SHARED_LIB_PATH": "<Absolute path of your Automatic Encryption Shared Library>",
     # AWS Credentials
     "AWS_ACCESS_KEY_ID": "<your AWS access key ID here>",
     "AWS_SECRET_ACCESS_KEY": "<your AWS secret access key here>",

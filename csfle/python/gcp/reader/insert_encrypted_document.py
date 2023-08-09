@@ -69,7 +69,7 @@ patient_schema = {"medicalRecords.patients": json_schema}
 
 
 # start-extra-options
-extra_options = {"mongocryptd_spawn_path": credentials["MONGOCRYPTD_PATH"]}
+extra_options = {"crypt_shared_lib_path": credentials["SHARED_LIB_PATH"]}
 # end-extra-options
 
 # start-client
@@ -78,7 +78,6 @@ fle_opts = AutoEncryptionOpts(
 )
 secureClient = MongoClient(connection_string, auto_encryption_opts=fle_opts)
 # end-client
-
 
 # start-insert
 def insert_patient(

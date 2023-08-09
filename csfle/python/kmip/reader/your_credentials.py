@@ -3,7 +3,7 @@ import re
 _credentials = {
     # Mongo Paths + URI
     "MONGODB_URI": "<your MongoDB URI here>",
-    "MONGOCRYPTD_PATH": "<your MongoCryptd path>",
+    "SHARED_LIB_PATH": "<Absolute path of your Automatic Encryption Shared Library>",
     # KMIP Credentials
     "KMIP_KMS_ENDPOINT": "<endpoint for your KMIP KMS. Default is 'localhost:5698'>",
     "KMIP_TLS_CA_FILE": "<full path to your KMIP certificate authority file. Default is '<path to this repo>/kmip_utils/certs/ca.pem'>",

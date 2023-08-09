@@ -28,7 +28,7 @@ public class YourCredentials {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
-        yourCredentials.put("MONGOCRYPTD_PATH", "<path to mongocryptd>");
+        yourCredentials.put("SHARED_LIB_PATH", "<Absolute path of your Automatic Encryption Shared Library>");
         // GCP Credentials
         yourCredentials.put("GCP_EMAIL", "<your GCP email>");
         yourCredentials.put("GCP_PRIVATE_KEY", "<your GCP private key>");

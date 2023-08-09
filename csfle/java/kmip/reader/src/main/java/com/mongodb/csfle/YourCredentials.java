@@ -28,7 +28,7 @@ public class YourCredentials {
         yourCredentials = new HashMap<>();
         // Mongo Paths + URI
         yourCredentials.put("MONGODB_URI", "<your MongoDB URI here>");
-        yourCredentials.put("MONGOCRYPTD_PATH", "<path to mongocryptd>");
+        yourCredentials.put("SHARED_LIB_PATH", "<Absolute path of your Automatic Encryption Shared Library>");
         // KMIP Credentials
         yourCredentials.put("KMIP_KMS_ENDPOINT", "<endpoint for your KMIP KMS. Default is 'localhost:5698'>");
         yourCredentials.put("KMIP_TLS_CA_FILE", "<full path to your KMIP certificate authority file. Default is '<path to this repo>/kmip_utils/certs/ca.pem'>");

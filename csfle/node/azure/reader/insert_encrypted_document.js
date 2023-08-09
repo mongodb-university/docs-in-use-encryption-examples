@@ -69,7 +69,7 @@ patientSchema[namespace] = schema;
 
 // start-extra-options
 const extraOptions = {
-  mongocryptdSpawnPath: credentials["MONGOCRYPTD_PATH"],
+  cryptSharedLibPath: credentials["SHARED_LIB_PATH"],
 };
 // end-extra-options
 
